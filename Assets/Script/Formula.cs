@@ -28,14 +28,14 @@ public class Formula {
 
 	public Formula(int unitCount = 20) {
 		this.unitCount = unitCount;
-		InitDataStruct();
+		InitializeDataStruct();
 		AllocateMemory();
 		ExpandList();
-		InitBaseOperation();
+		InitializeBaseOperation();
 		AutoCalculate = true;
 	}
 
-	void InitDataStruct() {
+	void InitializeDataStruct() {
 		poolStack = new Stack<Operation>(unitCount);
 		tagList = new List<Operation>(unitCount);
 	}
@@ -57,7 +57,7 @@ public class Formula {
 		}
 	}
 
-	void InitBaseOperation() {
+	void InitializeBaseOperation() {
 		baseOperation = new Operation();
 		tailOperation = baseOperation;
 		baseOperation.SetValue(0);

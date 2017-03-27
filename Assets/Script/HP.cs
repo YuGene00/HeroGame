@@ -5,12 +5,12 @@ using UnityEngine;
 public class HP {
 
 	//max HP
-	Formula maxHP;
-	public Formula MaxHP { get { return maxHP; } }
+	Formula maxHp;
+	public Formula MaxHp { get { return maxHp; } }
 
 	//current HP
-	int currentHP;
-	public int CurrentHP { get { return currentHP; } }
+	int currentHp;
+	public int CurrentHp { get { return currentHp; } }
 
 	public void Damaged(float value) {
 
