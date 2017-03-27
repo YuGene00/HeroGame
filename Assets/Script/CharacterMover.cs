@@ -5,12 +5,12 @@ using UnityEngine;
 public class CharacterMover {
 
 	//enum for move direction
-	enum Direction {
+	public enum Direction {
 		LEFT, RIGHT
 	}
 
 	//move state
-	enum MoveState {
+	public enum MoveState {
 		STAY, WALK, JUMP
 	}
 	MoveState state;
