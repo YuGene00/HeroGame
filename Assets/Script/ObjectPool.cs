@@ -10,7 +10,7 @@ public class ObjectPool {
 	//data structure
 	int unitCount;
 	Stack<GameObject> poolStack = new Stack<GameObject>();
-	
+
 	//parent for GameObject from ObjectPool
 	Parent parent;
 	struct Parent {
@@ -22,12 +22,12 @@ public class ObjectPool {
 		ObjectPool objPool = new ObjectPool();
 		objPool.origin = gameObj;
 		objPool.unitCount = unitCount;
-		objPool.InitParent();
+		objPool.InitializeParent();
 		objPool.AllocateMemory();
 		return objPool;
 	}
 
-	void InitParent() {
+	void InitializeParent() {
 		GameObject parentObj = new GameObject(origin.name);
 		parent.mono = parentObj.GetComponent<MonoBehaviour>();
 		parent.trans = parentObj.transform;

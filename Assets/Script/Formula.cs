@@ -5,6 +5,7 @@ public class Formula {
 	//data structure
 	int unitCount;
 	Stack<Operation> poolStack;
+	List<Operation> tagList;
 
 	//Operation for list
 	Operation baseOperation;
@@ -13,19 +14,30 @@ public class Formula {
 	//auto calculate flag
 	public bool AutoCalculate { get; set; }
 
+	//empty tag
+	int emptyTag = 0;
+	public int EmptyTag { get { return emptyTag; } }
+
 	//return value
 	public float BaseValue { get { return baseOperation.Result; } }
 	public float Value { get { return tailOperation.Result; } }
 
 	//Operation which has this Formula
 	Operation parentOperation = null;
+	public Operation ParentOperation { set { parentOperation = value; } }
 
 	public Formula(int unitCount = 20) {
 		this.unitCount = unitCount;
-		poolStack = new Stack<Operation>(unitCount);
+		InitializeDataStruct();
 		AllocateMemory();
+		ExpandList();
 		InitializeBaseOperation();
 		AutoCalculate = true;
+	}
+
+	void InitializeDataStruct() {
+		poolStack = new Stack<Operation>(unitCount);
+		tagList = new List<Operation>(unitCount);
 	}
 
 	void AllocateMemory() {
@@ -39,20 +51,26 @@ public class Formula {
 		poolStack.Push(operation);
 	}
 
+	void ExpandList() {
+		for (int i = 0; i < unitCount; ++i) {
+			tagList.Add(null);
+		}
+	}
+
 	void InitializeBaseOperation() {
 		baseOperation = new Operation();
 		tailOperation = baseOperation;
-		baseOperation.ParentFormula = this;
-		baseOperation.Operator = Operator.NONE;
-		SetBaseValue(0);
+		baseOperation.SetValue(0);
 	}
 
 	#region public void SetBaseValue(float/Formula value)
 	public void SetBaseValue(float value) {
+		baseOperation.Operator = Operator.NONE;
 		SetValueToOperation(value, baseOperation);
 	}
 
 	public void SetBaseValue(Formula value) {
+		baseOperation.Operator = Operator.NONE;
 		SetValueToOperation(value, baseOperation);
 	}
 	#endregion
@@ -60,75 +78,105 @@ public class Formula {
 	#region void SetValueToOperation(float/Formula value, Operation operation)
 	void SetValueToOperation(float value, Operation operation) {
 		operation.SetValue(value);
+		CallAutoCalculate(operation);
 	}
 
 	void SetValueToOperation(Formula value, Operation operation) {
 		operation.SetValue(value);
+		CallAutoCalculate(operation);
 	}
 	#endregion
 
-	#region public IOperation CreateAddition(float/Formula value)
-	public IOperation CreateAddition(float value) {
-		Operation operation = CreateOperationByOperator(Operator.ADDITION);
-		SetValueToOperation(value, operation);
-		return operation;
+	void CallAutoCalculate(Operation operation) {
+		if (AutoCalculate) {
+			CallRecalculate(operation);
+		}
 	}
 
-	public IOperation CreateAddition(Formula value) {
-		Operation operation = CreateOperationByOperator(Operator.ADDITION);
+	void CallRecalculate(Operation operation) {
+		operation.Recalculate();
+		if (parentOperation != null) {
+			parentOperation.Recalculate();
+		}
+	}
+
+	public void CalculateAll() {
+		CallRecalculate(baseOperation);
+	}
+
+	#region public void Set[Operator]ToTag(float/Formula value, int tag)
+	public void SetAdditionToTag(float value, int tag) {
+		Operation operation = RetainOperationByOperatorAndTag(Operator.ADDITION, tag);
 		SetValueToOperation(value, operation);
-		return operation;
+	}
+
+	public void SetAdditionToTag(Formula value, int tag) {
+		Operation operation = RetainOperationByOperatorAndTag(Operator.ADDITION, tag);
+		SetValueToOperation(value, operation);
+	}
+
+	public void SetSubtractionToTag(float value, int tag) {
+		Operation operation = RetainOperationByOperatorAndTag(Operator.SUBTRACTION, tag);
+		SetValueToOperation(value, operation);
+	}
+
+	public void SetSubtractionToTag(Formula value, int tag) {
+		Operation operation = RetainOperationByOperatorAndTag(Operator.SUBTRACTION, tag);
+		SetValueToOperation(value, operation);
+	}
+
+	public void SetMultiplicationToTag(float value, int tag) {
+		Operation operation = RetainOperationByOperatorAndTag(Operator.MULTIPLICATION, tag);
+		SetValueToOperation(value, operation);
+	}
+
+	public void SetMultiplicationToTag(Formula value, int tag) {
+		Operation operation = RetainOperationByOperatorAndTag(Operator.MULTIPLICATION, tag);
+		SetValueToOperation(value, operation);
+	}
+
+	public void SetDivisionToTag(float value, int tag) {
+		Operation operation = RetainOperationByOperatorAndTag(Operator.DIVISION, tag);
+		SetValueToOperation(value, operation);
+	}
+
+	public void SetDivisionToTag(Formula value, int tag) {
+		Operation operation = RetainOperationByOperatorAndTag(Operator.DIVISION, tag);
+		SetValueToOperation(value, operation);
 	}
 	#endregion
 
-	#region public IOperation CreateSubtraction(float/Formula value)
-	public IOperation CreateSubtraction(float value) {
-		Operation operation = CreateOperationByOperator(Operator.SUBTRACTION);
-		SetValueToOperation(value, operation);
-		return operation;
-	}
-
-	public IOperation CreateSubtraction(Formula value) {
-		Operation operation = CreateOperationByOperator(Operator.SUBTRACTION);
-		SetValueToOperation(value, operation);
-		return operation;
-	}
-	#endregion
-
-	#region public IOperation CreateMultiplication(float/Formula value)
-	public IOperation CreateMultiplication(float value) {
-		Operation operation = CreateOperationByOperator(Operator.MULTIPLICATION);
-		SetValueToOperation(value, operation);
-		return operation;
-	}
-
-	public IOperation CreateMultiplication(Formula value) {
-		Operation operation = CreateOperationByOperator(Operator.MULTIPLICATION);
-		SetValueToOperation(value, operation);
-		return operation;
-	}
-	#endregion
-
-	#region public IOperation CreateDivision(float/Formula value)
-	public IOperation CreateDivision(float value) {
-		Operation operation = CreateOperationByOperator(Operator.DIVISION);
-		SetValueToOperation(value, operation);
-		return operation;
-	}
-
-	public IOperation CreateDivision(Formula value) {
-		Operation operation = CreateOperationByOperator(Operator.DIVISION);
-		SetValueToOperation(value, operation);
-		return operation;
-	}
-	#endregion
-
-	Operation CreateOperationByOperator(Operator oper) {
-		Operation operation = RetainOperation();
-		operation.ParentFormula = this;
+	Operation RetainOperationByOperatorAndTag(Operator oper, int tag) {
+		if (IsTagEmpty(tag)) {
+			InsertOperationToTag(tag);
+		}
+		Operation operation = GetOperationByTag(tag);
 		operation.Operator = oper;
-		AttachToTail(operation);
 		return operation;
+	}
+
+	public bool IsTagEmpty(int tag) {
+		return GetOperationByTag(tag) == null;
+	}
+
+	public Operation GetOperationByTag(int tag) {
+		Operation operation = null;
+		if (!IsTagOutOfRange(tag)) {
+			operation = tagList[tag];
+		}
+		return operation;
+	}
+
+	bool IsTagOutOfRange(int tag) {
+		return tag >= tagList.Count;
+	}
+
+	void InsertOperationToTag(int tag) {
+		Operation operation = RetainOperation();
+		ExpandListToTag(tag);
+		tagList[tag] = operation;
+		AttachToTail(operation);
+		emptyTag = FindEmptyTagFromNext();
 	}
 
 	Operation RetainOperation() {
@@ -138,64 +186,68 @@ public class Formula {
 		return poolStack.Pop();
 	}
 
+	void ExpandListToTag(int tag) {
+		while (IsTagOutOfRange(tag)) {
+			ExpandList();
+		}
+	}
+
 	void AttachToTail(Operation operation) {
 		tailOperation.Next = operation;
 		tailOperation = tailOperation.Next;
 	}
 
-	public void DeleteOperation(IOperation iOperation) {
-		Operation operation = iOperation as Operation;
-		if (operation.ParentFormula != this) {
-			return;
-		}
-		Operation nextOperation = operation.Next;
-		ReturnToStack(operation);
-		if (nextOperation != null) {
-			nextOperation.StartAutoCalculate();
+	int FindEmptyTagFromNext() {
+		int tag = emptyTag;
+		while (true) {
+			ExpandListToTag(tag);
+			if (IsTagEmpty(tag)) {
+				return tag;
+			}
+			++tag;
 		}
 	}
 
-	void ReturnToStack(Operation operation) {
-		operation.Exclude();
-		operation.Clear();
-		poolStack.Push(operation);
+	public void removeOperationByTag(int tag) {
+		if (IsTagEmpty(tag)) {
+			return;
+		}
+		Operation prevOperation = GetOperationByTag(tag).Prev;
+		ReturnOperationToStackByTag(tag);
+		CallAutoCalculate(prevOperation);
+	}
+
+	void ReturnOperationToStackByTag(int tag) {
+		poolStack.Push(GetOperationByTag(tag));
+		RemoveOperationFromListByTag(tag);
+	}
+
+	void RemoveOperationFromListByTag(int tag) {
+		tagList[tag].Exclude();
+		tagList[tag].Clear();
+		tagList[tag] = null;
+		emptyTag = FindEmptyTagAfterRemove(tag);
+	}
+
+	int FindEmptyTagAfterRemove(int removeTag) {
+		if (removeTag < emptyTag) {
+			return removeTag;
+		} else {
+			return FindEmptyTagFromNext();
+		}
 	}
 
 	public void Clear() {
-		for (Operation operation = baseOperation.Next; operation != null; operation = baseOperation.Next) {
-			ReturnToStack(operation);
-		}
-	}
-
-	public void RefreshResult() {
-		bool originAutoCalculate = AutoCalculate;
-		AutoCalculate = true;
-		baseOperation.StartAutoCalculate();
-		AutoCalculate = originAutoCalculate;
-	}
-
-	void CallParentAutoCalculate() {
-		if (parentOperation != null) {
-			parentOperation.StartAutoCalculate();
+		for (int tag = 0; tag < tagList.Count; ++tag) {
+			if (!IsTagEmpty(tag)) {
+				ReturnOperationToStackByTag(tag);
+			}
 		}
 	}
 
 	public enum Operator { NONE, ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION }
 
-	public interface IOperation {
-
-		//Operator
-		Operator Operator { get; set; }
-
-		//value for operation
-		float Value { get; }
-
-		void SetValue(float value);
-
-		void SetValue(Formula value);
-	}
-
-	class Operation : IOperation {
+	public class Operation {
 
 		//Operator
 		Operator oper = Operator.NONE;
@@ -212,6 +264,7 @@ public class Formula {
 
 		//Operation for list
 		Operation prev = null;
+		public Operation Prev { get { return prev; } }
 		Operation next = null;
 		public Operation Next {
 			get { return next; }
@@ -223,23 +276,17 @@ public class Formula {
 			}
 		}
 
-		//Formula which has this Operation
-		Formula parentFormula = null;
-		public Formula ParentFormula { get { return parentFormula; } set { parentFormula = value; } }
-
 		public void SetValue(float value) {
 			ClearValue();
 			floatValue = value;
 			result = floatValue;
-			StartAutoCalculate();
 		}
 
 		public void SetValue(Formula value) {
 			ClearValue();
 			formulaValue = value;
-			value.parentOperation = this;
+			value.ParentOperation = this;
 			result = formulaValue.Value;
-			StartAutoCalculate();
 		}
 
 		void ClearValue() {
@@ -250,30 +297,24 @@ public class Formula {
 
 		void ClearFormula() {
 			if (formulaValue != null) {
-				formulaValue.parentOperation = null;
+				formulaValue.ParentOperation = null;
 				formulaValue = null;
 			}
 		}
 
-		public void StartAutoCalculate() {
-			if (!IsParentFormulaAutoCalculate()) {
-				return;
-			}
+		public void Clear() {
+			oper = Operator.NONE;
+			ClearValue();
+			prev = null;
+			next = null;
+		}
 
+		public void Recalculate() {
 			if (prev != null) {
 				CalculateTo(prev.result);
 			} else {
-				result = Value;
 				CallNextCalculate();
 			}
-
-			if (parentFormula != null) {
-				parentFormula.CallParentAutoCalculate();
-			}
-		}
-
-		bool IsParentFormulaAutoCalculate() {
-			return parentFormula != null && parentFormula.AutoCalculate;
 		}
 
 		void CalculateTo(float prevValue) {
@@ -309,14 +350,6 @@ public class Formula {
 			}
 			prev = null;
 			next = null;
-		}
-
-		public void Clear() {
-			oper = Operator.NONE;
-			ClearValue();
-			prev = null;
-			next = null;
-			parentFormula = null;
 		}
 	}
 }
