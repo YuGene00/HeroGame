@@ -9,7 +9,7 @@ public class MoveCollider : MonoBehaviour {
 	public CharacterMover characterMover;
 
 	//parent's AnimationMgr
-	public AnimationMgr AnimationMgr;
+	public AnimationManager AnimationMgr;
 
 	void OnCollisionEnter(Collision other) {
 

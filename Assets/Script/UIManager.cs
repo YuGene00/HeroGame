@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Singletons {
-	public class UIMgr : MonoBehaviour {
+	public class UIManager : MonoBehaviour {
 
 		//singleton
-		static UIMgr instance = null;
-		public static UIMgr Instance { get { return instance; } }
+		static UIManager instance = null;
+		public static UIManager Instance { get { return instance; } }
 
 		void Awake() {
 			instance = this;

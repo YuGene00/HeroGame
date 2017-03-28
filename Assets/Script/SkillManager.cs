@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillMgr {
+public class SkillManager {
 
 	public void RunPassive() {
 

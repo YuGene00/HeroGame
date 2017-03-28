@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Singletons {
-	public class EventMgr : MonoBehaviour {
+	public class EventManager : MonoBehaviour {
 
 		//singleton
-		static EventMgr instance = null;
-		public static EventMgr Instance { get { return instance; } }
+		static EventManager instance = null;
+		public static EventManager Instance { get { return instance; } }
 
 		//event object
 		RemainTimer remainTimer;

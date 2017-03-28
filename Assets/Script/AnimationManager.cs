@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnimationMgr {
+public class AnimationManager {
 
 	public enum AnimationType {
 		STAY, WALK, JUMP
 	}
 
-	AnimationMgr() {
+	AnimationManager() {
 
 	}
 
-	public static AnimationMgr CreateByTarger(Animator target) {
+	public static AnimationManager CreateByTarger(Animator target) {
 		return null;
 	}
 

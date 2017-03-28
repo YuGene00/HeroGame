@@ -14,24 +14,24 @@ namespace Singletons {
 		}
 
 		public void LoadStage(int stageNo) {
-			InitFromFile();
-			InitCommon();
+			InitializeFromFile();
+			InitializeCommon();
 		}
 
-		void InitFromFile() {
+		void InitializeFromFile() {
 
 		}
 
-		void InitCommon() {
+		void InitializeCommon() {
 
 		}
 
 		public void Run() {
-			EventMgr.Instance.RemainTimer.Run();
+			EventManager.Instance.RemainTimer.Run();
 		}
 
 		public void Pause() {
-			EventMgr.Instance.RemainTimer.Pause();
+			EventManager.Instance.RemainTimer.Pause();
 		}
 	}
 }
