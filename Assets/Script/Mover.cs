@@ -4,16 +4,19 @@ using UnityEngine;
 
 public class Mover {
 
+	//target transform
+	Transform target;
+
 	//move speed
 	Formula speed;
 	public Formula Speed { get { return speed; } }
 
-	Mover() {
-
-	}
+	Mover();
 
 	public static Mover CreateByTarget(Transform target) {
-		return null;
+		Mover mover = new Mover();
+		mover.target = target;
+		return mover;
 	}
 
 	public void MoveTo(Vector2 direction) {
