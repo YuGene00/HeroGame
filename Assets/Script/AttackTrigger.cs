@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class AttackTrigger : MonoBehaviour {
 
-	void OnTriggerStay(Collider other) {
+	void OnTriggerStay(Collider collision) {
 
 	}
 }

@@ -4,16 +4,19 @@ using UnityEngine;
 
 public class AnimationManager {
 
+	//target Animator
+	Animator target;
+
 	public enum AnimationType {
 		STAY, WALK, JUMP
 	}
 
-	AnimationManager() {
-
-	}
+	AnimationManager() { }
 
 	public static AnimationManager CreateByTarger(Animator target) {
-		return null;
+		AnimationManager animationManager = new AnimationManager();
+		animationManager.target = target;
+		return animationManager;
 	}
 
 	public void Animate(AnimationType animationType) {

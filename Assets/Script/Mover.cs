@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Mover {
 
-	//target transform
+	//target Transform
 	Transform target;
 
 	//move speed
-	Formula speed;
-	public Formula Speed { get { return speed; } }
+	Formula<float> speed;
+	public Formula<float> Speed { get { return speed; } }
 
-	Mover();
+	Mover() { }
 
 	public static Mover CreateByTarget(Transform target) {
 		Mover mover = new Mover();
@@ -20,6 +20,6 @@ public class Mover {
 	}
 
 	public void MoveTo(Vector2 direction) {
-
+		target.Translate(direction * speed.Value * Time.deltaTime);
 	}
 }

@@ -5,18 +5,32 @@ using UnityEngine;
 public class HP {
 
 	//max HP
-	Formula maxHp;
-	public Formula MaxHp { get { return maxHp; } }
+	Formula<int> maxHp;
+	public Formula<int> MaxHp { get { return maxHp; } }
 
 	//current HP
 	int currentHp;
 	public int CurrentHp { get { return currentHp; } }
 
-	public void Damaged(float value) {
+	//immortal
+	bool immortal = false;
+	const float immortalTime = 1f;
+	WaitForSeconds immortalTimeWait = new WaitForSeconds(immortalTime);
 
+	public void Damaged(int value) {
+		if (!immortal) {
+			currentHp -= value;
+			Singletons.CoroutineDelegate.Instance.StartCoroutine(RunImmortal());
+		}
 	}
 
-	public void Recovery(float value) {
+	IEnumerator RunImmortal() {
+		immortal = true;
+		yield return immortalTime;
+		immortal = false;
+	}
+
+	public void Recovery(int value) {
 
 	}
 }

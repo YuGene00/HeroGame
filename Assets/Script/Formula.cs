@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-public class Formula {
+public class Formula<T> {
 
 	//data structure
 	int unitCount;
@@ -14,8 +15,8 @@ public class Formula {
 	public bool AutoCalculate { get; set; }
 
 	//return value
-	public float BaseValue { get { return baseOperation.Result; } }
-	public float Value { get { return tailOperation.Result; } }
+	public T BaseValue { get { return baseOperation.Result; } }
+	public T Value { get { return tailOperation.Result; } }
 
 	//Operation which has this Formula
 	Operation parentOperation = null;
@@ -44,79 +45,79 @@ public class Formula {
 		tailOperation = baseOperation;
 		baseOperation.ParentFormula = this;
 		baseOperation.Operator = Operator.NONE;
-		SetBaseValue(0);
+		SetBaseValue(default(T));
 	}
 
-	#region public void SetBaseValue(float/Formula value)
-	public void SetBaseValue(float value) {
+	#region public void SetBaseValue(T/Formula value)
+	public void SetBaseValue(T value) {
 		SetValueToOperation(value, baseOperation);
 	}
 
-	public void SetBaseValue(Formula value) {
+	public void SetBaseValue(Formula<T> value) {
 		SetValueToOperation(value, baseOperation);
 	}
 	#endregion
 
-	#region void SetValueToOperation(float/Formula value, Operation operation)
-	void SetValueToOperation(float value, Operation operation) {
+	#region void SetValueToOperation(T/Formula value, Operation operation)
+	void SetValueToOperation(T value, Operation operation) {
 		operation.SetValue(value);
 	}
 
-	void SetValueToOperation(Formula value, Operation operation) {
+	void SetValueToOperation(Formula<T> value, Operation operation) {
 		operation.SetValue(value);
 	}
 	#endregion
 
-	#region public IOperation CreateAddition(float/Formula value)
-	public IOperation CreateAddition(float value) {
+	#region public IOperation CreateAddition(T/Formula value)
+	public IOperation CreateAddition(T value) {
 		Operation operation = CreateOperationByOperator(Operator.ADDITION);
 		SetValueToOperation(value, operation);
 		return operation;
 	}
 
-	public IOperation CreateAddition(Formula value) {
+	public IOperation CreateAddition(Formula<T> value) {
 		Operation operation = CreateOperationByOperator(Operator.ADDITION);
 		SetValueToOperation(value, operation);
 		return operation;
 	}
 	#endregion
 
-	#region public IOperation CreateSubtraction(float/Formula value)
-	public IOperation CreateSubtraction(float value) {
+	#region public IOperation CreateSubtraction(T/Formula value)
+	public IOperation CreateSubtraction(T value) {
 		Operation operation = CreateOperationByOperator(Operator.SUBTRACTION);
 		SetValueToOperation(value, operation);
 		return operation;
 	}
 
-	public IOperation CreateSubtraction(Formula value) {
+	public IOperation CreateSubtraction(Formula<T> value) {
 		Operation operation = CreateOperationByOperator(Operator.SUBTRACTION);
 		SetValueToOperation(value, operation);
 		return operation;
 	}
 	#endregion
 
-	#region public IOperation CreateMultiplication(float/Formula value)
-	public IOperation CreateMultiplication(float value) {
+	#region public IOperation CreateMultiplication(T/Formula value)
+	public IOperation CreateMultiplication(T value) {
 		Operation operation = CreateOperationByOperator(Operator.MULTIPLICATION);
 		SetValueToOperation(value, operation);
 		return operation;
 	}
 
-	public IOperation CreateMultiplication(Formula value) {
+	public IOperation CreateMultiplication(Formula<T> value) {
 		Operation operation = CreateOperationByOperator(Operator.MULTIPLICATION);
 		SetValueToOperation(value, operation);
 		return operation;
 	}
 	#endregion
 
-	#region public IOperation CreateDivision(float/Formula value)
-	public IOperation CreateDivision(float value) {
+	#region public IOperation CreateDivision(T/Formula value)
+	public IOperation CreateDivision(T value) {
 		Operation operation = CreateOperationByOperator(Operator.DIVISION);
 		SetValueToOperation(value, operation);
 		return operation;
 	}
 
-	public IOperation CreateDivision(Formula value) {
+	public IOperation CreateDivision(Formula<T> value) {
 		Operation operation = CreateOperationByOperator(Operator.DIVISION);
 		SetValueToOperation(value, operation);
 		return operation;
@@ -173,12 +174,10 @@ public class Formula {
 		Operator Operator { get; set; }
 
 		//value for operation
-		float Value { get; }
+		T Value { get; }
 
-		void SetValue(float value);
-
-		void SetValue(Formula value);
-
+		void SetValue(T value);
+		void SetValue(Formula<T> value);
 		void DeleteFromFormula();
 	}
 
@@ -195,13 +194,13 @@ public class Formula {
 		}
 
 		//value for operation
-		float floatValue = 0;
-		Formula formulaValue = null;
-		public float Value { get { return formulaValue == null ? floatValue : formulaValue.Value; } }
+		T TValue = default(T);
+		Formula<T> formulaValue = null;
+		public T Value { get { return formulaValue == null ? TValue : formulaValue.Value; } }
 
 		//result
-		float result = 0;
-		public float Result { get { return result; } }
+		T result = default(T);
+		public T Result { get { return result; } }
 
 		//Operation for list
 		Operation prev = null;
@@ -217,17 +216,17 @@ public class Formula {
 		}
 
 		//Formula which has this Operation
-		Formula parentFormula = null;
-		public Formula ParentFormula { get { return parentFormula; } set { parentFormula = value; } }
+		Formula<T> parentFormula = null;
+		public Formula<T> ParentFormula { get { return parentFormula; } set { parentFormula = value; } }
 
-		public void SetValue(float value) {
+		public void SetValue(T value) {
 			ClearValue();
-			floatValue = value;
-			result = floatValue;
+			TValue = value;
+			result = TValue;
 			StartAutoCalculate();
 		}
 
-		public void SetValue(Formula value) {
+		public void SetValue(Formula<T> value) {
 			ClearValue();
 			formulaValue = value;
 			value.parentOperation = this;
@@ -236,9 +235,9 @@ public class Formula {
 		}
 
 		void ClearValue() {
-			floatValue = 0;
+			TValue = default(T);
 			ClearFormula();
-			result = 0;
+			result = default(T);
 		}
 
 		void ClearFormula() {
@@ -269,19 +268,19 @@ public class Formula {
 			return parentFormula != null && parentFormula.AutoCalculate;
 		}
 
-		void CalculateTo(float prevValue) {
+		void CalculateTo(T prevValue) {
 			switch (oper) {
 				case Operator.ADDITION:
-					result = prevValue + Value;
+					result = Singletons.GenericCalculator<T>.Instance.Add(prevValue, Value);
 					break;
 				case Operator.SUBTRACTION:
-					result = prevValue - Value;
+					result = Singletons.GenericCalculator<T>.Instance.Subtract(prevValue, Value);
 					break;
 				case Operator.MULTIPLICATION:
-					result = prevValue * Value;
+					result = Singletons.GenericCalculator<T>.Instance.Multiply(prevValue, Value);
 					break;
 				case Operator.DIVISION:
-					result = prevValue / Value;
+					result = Singletons.GenericCalculator<T>.Instance.Divide(prevValue, Value);
 					break;
 			}
 			CallNextCalculate();
@@ -328,5 +327,139 @@ public class Formula {
 			next = null;
 			parentFormula = null;
 		}
+	}
+}
+
+namespace Singletons {
+	public abstract class GenericCalculator<T> {
+
+		//calculators for singleton
+		static IntCalculator intCalculator = new IntCalculator();
+		static FloatCalculator floatCalculator = new FloatCalculator();
+		static DoubleCalculator doubleCalculator = new DoubleCalculator();
+
+		public static GenericCalculator<T> Instance {
+			get {
+				if (typeof(T) == typeof(int)) {
+					return intCalculator as GenericCalculator<T>;
+				} else if (typeof(T) == typeof(float)) {
+					return floatCalculator as GenericCalculator<T>;
+				} else if (typeof(T) == typeof(double)) {
+					return doubleCalculator as GenericCalculator<T>;
+				}
+				throw new Exception("Not Numberic Type Exception");
+			}
+		}
+
+		public abstract T Add(T value1, T value2);
+		public abstract T Subtract(T value1, T value2);
+		public abstract T Multiply(T value1, T value2);
+		public abstract T Divide(T value1, T value2);
+		#region public abstract T ConvertToGenericType(int/float/double value)
+		public abstract T ConvertToGenericType(int value);
+		public abstract T ConvertToGenericType(float value);
+		public abstract T ConvertToGenericType(double value);
+		#endregion
+
+		#region class [T]Calculator : GenericCalculator<T>
+		class IntCalculator : GenericCalculator<int> {
+
+			public override int Add(int value1, int value2) {
+				return value1 + value2;
+			}
+
+			public override int Subtract(int value1, int value2) {
+				return value1 - value2;
+			}
+
+			public override int Multiply(int value1, int value2) {
+				return value1 * value2;
+			}
+
+			public override int Divide(int value1, int value2) {
+				return value1 / value2;
+			}
+
+			#region public override int ConvertToGenericType(int/float/double value)
+			public override int ConvertToGenericType(int value) {
+				return value;
+			}
+
+			public override int ConvertToGenericType(float value) {
+				return (int)value;
+			}
+
+			public override int ConvertToGenericType(double value) {
+				return (int)value;
+			}
+			#endregion
+		}
+
+		class FloatCalculator : GenericCalculator<float> {
+
+			public override float Add(float value1, float value2) {
+				return value1 + value2;
+			}
+
+			public override float Subtract(float value1, float value2) {
+				return value1 - value2;
+			}
+
+			public override float Multiply(float value1, float value2) {
+				return value1 * value2;
+			}
+
+			public override float Divide(float value1, float value2) {
+				return value1 / value2;
+			}
+
+			#region public override float ConvertToGenericType(int/float/double value)
+			public override float ConvertToGenericType(int value) {
+				return value;
+			}
+
+			public override float ConvertToGenericType(float value) {
+				return value;
+			}
+
+			public override float ConvertToGenericType(double value) {
+				return (float)value;
+			}
+			#endregion
+		}
+
+		class DoubleCalculator : GenericCalculator<double> {
+
+			public override double Add(double value1, double value2) {
+				return value1 + value2;
+			}
+
+			public override double Subtract(double value1, double value2) {
+				return value1 - value2;
+			}
+
+			public override double Multiply(double value1, double value2) {
+				return value1 * value2;
+			}
+
+			public override double Divide(double value1, double value2) {
+				return value1 / value2;
+			}
+
+			#region public override double ConvertToGenericType(int/float/double value)
+			public override double ConvertToGenericType(int value) {
+				return value;
+			}
+
+			public override double ConvertToGenericType(float value) {
+				return value;
+			}
+
+			public override double ConvertToGenericType(double value) {
+				return value;
+			}
+			#endregion
+		}
+		#endregion
 	}
 }

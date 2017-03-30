@@ -8,11 +8,11 @@ public class AgroTrigger : MonoBehaviour {
 	//parent's AI
 	public AI ai;
 
-	void OnTriggerEnter(Collider other) {
+	void OnTriggerEnter(Collider collision) {
 
 	}
 
-	void OnTriggerExit(Collider other) {
+	void OnTriggerExit(Collider collision) {
 
 	}
 }
