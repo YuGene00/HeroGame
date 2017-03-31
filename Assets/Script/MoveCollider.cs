@@ -6,10 +6,12 @@ using UnityEngine;
 public class MoveCollider : MonoBehaviour {
 
 	//parent's CharacterMover
-	public CharacterMover characterMover;
+	[SerializeField]
+	CharacterMover characterMover;
 
 	//parent's AnimationManager
-	public AnimationManager animationManager;
+	[SerializeField]
+	AnimationManager animationManager;
 
 	void OnCollisionEnter2D(Collision2D collision) {
 		if (characterMover.State == CharacterMover.MoveState.JUMP) {

@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class CharacterMover {
 
 	//target Rigidbody
-	Rigidbody target;
+	Rigidbody2D target;
 
 	//mover
-	Mover mover;
+	[SerializeField]
+	public Mover mover;
 
 	//enum for move direction
 	public enum Direction {
@@ -22,9 +24,13 @@ public class CharacterMover {
 	MoveState state = MoveState.STAY;
 	public MoveState State { get { return state; } }
 
+	//jump power
+	[SerializeField]
+	public float jumpPower;
+
 	CharacterMover() { }
 
-	public static CharacterMover CreateByTarget(Rigidbody target) {
+	public static CharacterMover CreateByTarget(Rigidbody2D target) {
 		CharacterMover characterMover = new CharacterMover();
 		characterMover.target = target;
 		characterMover.mover = Mover.CreateByTarget(target.transform);
@@ -66,7 +72,7 @@ public class CharacterMover {
 		if (state == MoveState.WALK) {
 			vector2 += ConvertToVector2(direction);
 		}
-		target.AddForce(vector2);
+		target.AddForce(vector2 * jumpPower);
 	}
 
 	public void Stop() {

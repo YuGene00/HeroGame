@@ -13,7 +13,7 @@ public class SkillManager {
 		RunSkill(passiveSkills);
 	}
 
-	public void RunActive() {
+	public void RunUnique() {
 		RunSkill(uniqueSkill);
 	}
 

@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Singletons {
-	public class EventManager : MonoBehaviour {
+public class EventManager : MonoBehaviour {
 
-		//singleton
-		static EventManager instance = null;
-		public static EventManager Instance { get { return instance; } }
+	//singleton
+	static EventManager instance = null;
+	public static EventManager Instance { get { return instance; } }
 
-		//event object
-		RemainTimer remainTimer;
-		public RemainTimer RemainTimer { get { return remainTimer; } }
-		PlayerDie playerDie;
-		public PlayerDie PlayerDie { get { return playerDie; } }
-		Result result;
-		public Result Result { get { return result; } }
+	//event object
+	RemainTimer remainTimer;
+	public RemainTimer RemainTimer { get { return remainTimer; } }
+	PlayerDie playerDie;
+	public PlayerDie PlayerDie { get { return playerDie; } }
+	Result result;
+	public Result Result { get { return result; } }
 
-		void Awake() {
-			instance = this;
-		}
+	void Awake() {
+		instance = this;
 	}
 }

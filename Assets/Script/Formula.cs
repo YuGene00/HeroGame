@@ -271,16 +271,16 @@ public class Formula<T> {
 		void CalculateTo(T prevValue) {
 			switch (oper) {
 				case Operator.ADDITION:
-					result = Singletons.GenericCalculator<T>.Instance.Add(prevValue, Value);
+					result = GenericCalculator<T>.Instance.Add(prevValue, Value);
 					break;
 				case Operator.SUBTRACTION:
-					result = Singletons.GenericCalculator<T>.Instance.Subtract(prevValue, Value);
+					result = GenericCalculator<T>.Instance.Subtract(prevValue, Value);
 					break;
 				case Operator.MULTIPLICATION:
-					result = Singletons.GenericCalculator<T>.Instance.Multiply(prevValue, Value);
+					result = GenericCalculator<T>.Instance.Multiply(prevValue, Value);
 					break;
 				case Operator.DIVISION:
-					result = Singletons.GenericCalculator<T>.Instance.Divide(prevValue, Value);
+					result = GenericCalculator<T>.Instance.Divide(prevValue, Value);
 					break;
 			}
 			CallNextCalculate();
@@ -330,136 +330,135 @@ public class Formula<T> {
 	}
 }
 
-namespace Singletons {
-	public abstract class GenericCalculator<T> {
+public abstract class GenericCalculator<T> {
 
-		//calculators for singleton
-		static IntCalculator intCalculator = new IntCalculator();
-		static FloatCalculator floatCalculator = new FloatCalculator();
-		static DoubleCalculator doubleCalculator = new DoubleCalculator();
+	//calculators for singleton
+	static IntCalculator intCalculator = new IntCalculator();
+	static FloatCalculator floatCalculator = new FloatCalculator();
+	static DoubleCalculator doubleCalculator = new DoubleCalculator();
 
-		public static GenericCalculator<T> Instance {
-			get {
-				if (typeof(T) == typeof(int)) {
-					return intCalculator as GenericCalculator<T>;
-				} else if (typeof(T) == typeof(float)) {
-					return floatCalculator as GenericCalculator<T>;
-				} else if (typeof(T) == typeof(double)) {
-					return doubleCalculator as GenericCalculator<T>;
-				}
-				throw new Exception("Not Numberic Type Exception");
+	//sinigleton
+	public static GenericCalculator<T> Instance {
+		get {
+			if (typeof(T) == typeof(int)) {
+				return intCalculator as GenericCalculator<T>;
+			} else if (typeof(T) == typeof(float)) {
+				return floatCalculator as GenericCalculator<T>;
+			} else if (typeof(T) == typeof(double)) {
+				return doubleCalculator as GenericCalculator<T>;
 			}
+			throw new Exception("Not Numberic Type Exception");
+		}
+	}
+
+	public abstract T Add(T value1, T value2);
+	public abstract T Subtract(T value1, T value2);
+	public abstract T Multiply(T value1, T value2);
+	public abstract T Divide(T value1, T value2);
+	#region public abstract T ConvertToGenericType(int/float/double value)
+	public abstract T ConvertToGenericType(int value);
+	public abstract T ConvertToGenericType(float value);
+	public abstract T ConvertToGenericType(double value);
+	#endregion
+
+	#region class [T]Calculator : GenericCalculator<T>
+	class IntCalculator : GenericCalculator<int> {
+
+		public override int Add(int value1, int value2) {
+			return value1 + value2;
 		}
 
-		public abstract T Add(T value1, T value2);
-		public abstract T Subtract(T value1, T value2);
-		public abstract T Multiply(T value1, T value2);
-		public abstract T Divide(T value1, T value2);
-		#region public abstract T ConvertToGenericType(int/float/double value)
-		public abstract T ConvertToGenericType(int value);
-		public abstract T ConvertToGenericType(float value);
-		public abstract T ConvertToGenericType(double value);
-		#endregion
-
-		#region class [T]Calculator : GenericCalculator<T>
-		class IntCalculator : GenericCalculator<int> {
-
-			public override int Add(int value1, int value2) {
-				return value1 + value2;
-			}
-
-			public override int Subtract(int value1, int value2) {
-				return value1 - value2;
-			}
-
-			public override int Multiply(int value1, int value2) {
-				return value1 * value2;
-			}
-
-			public override int Divide(int value1, int value2) {
-				return value1 / value2;
-			}
-
-			#region public override int ConvertToGenericType(int/float/double value)
-			public override int ConvertToGenericType(int value) {
-				return value;
-			}
-
-			public override int ConvertToGenericType(float value) {
-				return (int)value;
-			}
-
-			public override int ConvertToGenericType(double value) {
-				return (int)value;
-			}
-			#endregion
+		public override int Subtract(int value1, int value2) {
+			return value1 - value2;
 		}
 
-		class FloatCalculator : GenericCalculator<float> {
-
-			public override float Add(float value1, float value2) {
-				return value1 + value2;
-			}
-
-			public override float Subtract(float value1, float value2) {
-				return value1 - value2;
-			}
-
-			public override float Multiply(float value1, float value2) {
-				return value1 * value2;
-			}
-
-			public override float Divide(float value1, float value2) {
-				return value1 / value2;
-			}
-
-			#region public override float ConvertToGenericType(int/float/double value)
-			public override float ConvertToGenericType(int value) {
-				return value;
-			}
-
-			public override float ConvertToGenericType(float value) {
-				return value;
-			}
-
-			public override float ConvertToGenericType(double value) {
-				return (float)value;
-			}
-			#endregion
+		public override int Multiply(int value1, int value2) {
+			return value1 * value2;
 		}
 
-		class DoubleCalculator : GenericCalculator<double> {
+		public override int Divide(int value1, int value2) {
+			return value1 / value2;
+		}
 
-			public override double Add(double value1, double value2) {
-				return value1 + value2;
-			}
+		#region public override int ConvertToGenericType(int/float/double value)
+		public override int ConvertToGenericType(int value) {
+			return value;
+		}
 
-			public override double Subtract(double value1, double value2) {
-				return value1 - value2;
-			}
+		public override int ConvertToGenericType(float value) {
+			return (int)value;
+		}
 
-			public override double Multiply(double value1, double value2) {
-				return value1 * value2;
-			}
-
-			public override double Divide(double value1, double value2) {
-				return value1 / value2;
-			}
-
-			#region public override double ConvertToGenericType(int/float/double value)
-			public override double ConvertToGenericType(int value) {
-				return value;
-			}
-
-			public override double ConvertToGenericType(float value) {
-				return value;
-			}
-
-			public override double ConvertToGenericType(double value) {
-				return value;
-			}
-			#endregion
+		public override int ConvertToGenericType(double value) {
+			return (int)value;
 		}
 		#endregion
 	}
+
+	class FloatCalculator : GenericCalculator<float> {
+
+		public override float Add(float value1, float value2) {
+			return value1 + value2;
+		}
+
+		public override float Subtract(float value1, float value2) {
+			return value1 - value2;
+		}
+
+		public override float Multiply(float value1, float value2) {
+			return value1 * value2;
+		}
+
+		public override float Divide(float value1, float value2) {
+			return value1 / value2;
+		}
+
+		#region public override float ConvertToGenericType(int/float/double value)
+		public override float ConvertToGenericType(int value) {
+			return value;
+		}
+
+		public override float ConvertToGenericType(float value) {
+			return value;
+		}
+
+		public override float ConvertToGenericType(double value) {
+			return (float)value;
+		}
+		#endregion
+	}
+
+	class DoubleCalculator : GenericCalculator<double> {
+
+		public override double Add(double value1, double value2) {
+			return value1 + value2;
+		}
+
+		public override double Subtract(double value1, double value2) {
+			return value1 - value2;
+		}
+
+		public override double Multiply(double value1, double value2) {
+			return value1 * value2;
+		}
+
+		public override double Divide(double value1, double value2) {
+			return value1 / value2;
+		}
+
+		#region public override double ConvertToGenericType(int/float/double value)
+		public override double ConvertToGenericType(int value) {
+			return value;
+		}
+
+		public override double ConvertToGenericType(float value) {
+			return value;
+		}
+
+		public override double ConvertToGenericType(double value) {
+			return value;
+		}
+		#endregion
+	}
+	#endregion
 }

@@ -8,7 +8,7 @@ public class AnimationManager {
 	Animator target;
 
 	public enum AnimationType {
-		STAY, WALK, JUMP
+		STAY, WALK, JUMP, DIE
 	}
 
 	AnimationManager() { }

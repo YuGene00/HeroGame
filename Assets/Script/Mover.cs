@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Mover {
 
 	//target Transform
 	Transform target;
 
 	//move speed
-	Formula<float> speed;
+	[SerializeField]
+	float baseSpeed;
+	Formula<float> speed = new Formula<float>();
 	public Formula<float> Speed { get { return speed; } }
 
-	Mover() { }
+	Mover() {
+		speed.SetBaseValue(baseSpeed);
+	}
 
 	public static Mover CreateByTarget(Transform target) {
 		Mover mover = new Mover();

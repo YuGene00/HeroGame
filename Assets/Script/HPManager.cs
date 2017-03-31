@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HP {
+public class HPManager {
 
 	//max HP
-	Formula<int> maxHp;
+	Formula<int> maxHp = new Formula<int>();
 	public Formula<int> MaxHp { get { return maxHp; } }
 
 	//current HP
@@ -17,10 +17,14 @@ public class HP {
 	const float immortalTime = 1f;
 	WaitForSeconds immortalTimeWait = new WaitForSeconds(immortalTime);
 
+	public HPManager() {
+		currentHp = maxHp.Value;
+	}
+
 	public void Damaged(int value) {
 		if (!immortal) {
 			currentHp -= value;
-			Singletons.CoroutineDelegate.Instance.StartCoroutine(RunImmortal());
+			CoroutineDelegate.Instance.StartCoroutine(RunImmortal());
 		}
 	}
 
@@ -31,6 +35,6 @@ public class HP {
 	}
 
 	public void Recovery(int value) {
-
+		currentHp = Mathf.Min(currentHp + value, maxHp.Value);
 	}
 }
