@@ -4,7 +4,17 @@ using UnityEngine;
 
 public class SkillManager {
 
-	//passive skills
+	//passive level
+	int passiveLevel;
+	public int PassiveLevel {
+		get { return passiveLevel; }
+		set {
+			passiveLevel = value;
+			Player.Instance.RunPassive();
+		}
+	}
+
+	//skill
 	Skill[] passiveSkills;
 	Skill uniqueSkill;
 	Skill ultimateSkill;

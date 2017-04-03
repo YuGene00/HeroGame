@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class AI {
 
-	public void SetAgro(bool agro) {
+	//flag to check agro
+	bool isAgro = false;
 
+	public void SetAgro(bool isAgro) {
+		this.isAgro = isAgro;
 	}
 }

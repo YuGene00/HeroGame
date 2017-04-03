@@ -14,14 +14,14 @@ public class Mover {
 	Formula<float> speed = new Formula<float>();
 	public Formula<float> Speed { get { return speed; } }
 
-	Mover() {
+	public void InitializeBy(Transform target) {
+		InitializeStat();
 		speed.SetBaseValue(baseSpeed);
+		this.target = target;
 	}
 
-	public static Mover CreateByTarget(Transform target) {
-		Mover mover = new Mover();
-		mover.target = target;
-		return mover;
+	public void InitializeStat() {
+		speed.Clear();
 	}
 
 	public void MoveTo(Vector2 direction) {

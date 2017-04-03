@@ -11,12 +11,8 @@ public class AnimationManager {
 		STAY, WALK, JUMP, DIE
 	}
 
-	AnimationManager() { }
-
-	public static AnimationManager CreateByTarger(Animator target) {
-		AnimationManager animationManager = new AnimationManager();
-		animationManager.target = target;
-		return animationManager;
+	public void InitializeBy(Animator target) {
+		this.target = target;
 	}
 
 	public void Animate(AnimationType animationType) {

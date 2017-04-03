@@ -7,7 +7,29 @@ public interface IEvent {
 	void Run();
 }
 
-public class RemainTimer : IEvent {
+public class InitializeStage : IEvent {
+
+	public void LoadStage(int stageNo) {
+
+	}
+
+	public void Run() {
+
+	}
+}
+
+public class RunStage : IEvent {
+
+	public void Run() {
+
+	}
+
+	public void Pause() {
+
+	}
+}
+
+public class RemainTime : IEvent {
 
 	//remain time
 	float time;

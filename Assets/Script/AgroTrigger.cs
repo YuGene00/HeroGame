@@ -6,13 +6,14 @@ using UnityEngine;
 public class AgroTrigger : MonoBehaviour {
 
 	//parent's AI
-	public AI ai;
+	[SerializeField]
+	AI ai;
 
 	void OnTriggerEnter(Collider collision) {
-
+		ai.SetAgro(true);
 	}
 
 	void OnTriggerExit(Collider collision) {
-
+		ai.SetAgro(false);
 	}
 }

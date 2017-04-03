@@ -2,58 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
-[RequireComponent(typeof(Animator), typeof(SpriteRenderer), typeof(Rigidbody2D))]
-public class Player : MonoBehaviour {
+public class Player : Character {
 
 	//singleton
 	static Player instance = null;
 	public static Player Instance { get { return instance; } }
-	
-	//move
-	SpriteRenderer spriteRenderer;
-	[SerializeField]
-	public CharacterMover characterMover;
-
-	//animation
-	AnimationManager animationManager;
 
 	//skill
-	SkillManager skillManager;
+	SkillManager skillManager = new SkillManager();
+	public SkillManager SkillManager { get { return skillManager; } }
 
-	//HP
-	HPManager hpManager;
-
-	void Awake() {
+	new void Awake() {
 		instance = this;
-		spriteRenderer = GetComponent<SpriteRenderer>();
-		characterMover = CharacterMover.CreateByTarget(GetComponent<Rigidbody2D>());
-		animationManager = AnimationManager.CreateByTarger(GetComponent<Animator>());
-		skillManager = new SkillManager();
-		hpManager = new HPManager();
-	}
-
-	public void WalkTo(CharacterMover.Direction direction) {
-		spriteRenderer.flipX = !spriteRenderer.flipX;
-		characterMover.WalkTo(direction);
-		if (characterMover.State != CharacterMover.MoveState.JUMP) {
-			animationManager.Animate(AnimationManager.AnimationType.WALK);
-		}
-	}
-
-	public void JumpTo(CharacterMover.Direction direction) {
-		characterMover.JumpTo(direction);
-	}
-
-	public void Stop() {
-		characterMover.Stop();
-	}
-
-	public void Animate(AnimationManager.AnimationType animation) {
-		animationManager.Animate(animation);
+		base.Awake();
 	}
 
 	public void RunPassive() {
+		ResetStat();
 		skillManager.RunPassive();
 	}
 
@@ -61,16 +26,12 @@ public class Player : MonoBehaviour {
 		skillManager.RunUnique();
 	}
 
-	public void Damaged(int value) {
-		hpManager.Damaged(value);
+	public override void Damaged(int value) {
 		EventManager.Instance.Result.IncreaseHitCount();
-		if (hpManager.CurrentHp <= 0) {
-			animationManager.Animate(AnimationManager.AnimationType.DIE);
-			EventManager.Instance.PlayerDie.Run();
-		}
+		base.Damaged(value);
 	}
 
-	public void Recovery(int value) {
-		hpManager.Recovery(value);
+	protected override void DeadAction() {
+		EventManager.Instance.PlayerDie.Run();
 	}
 }

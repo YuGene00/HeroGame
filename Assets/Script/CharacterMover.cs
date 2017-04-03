@@ -10,7 +10,8 @@ public class CharacterMover {
 
 	//mover
 	[SerializeField]
-	public Mover mover;
+	Mover mover = new Mover();
+	public Mover Mover { get { return mover; } }
 
 	//enum for move direction
 	public enum Direction {
@@ -26,15 +27,20 @@ public class CharacterMover {
 
 	//jump power
 	[SerializeField]
-	public float jumpPower;
+	float baseJumpPower;
+	Formula<float> jumpPower = new Formula<float>();
+	public Formula<float> JumpPower { get { return jumpPower; } }
 
-	CharacterMover() { }
+	public void InitializeBy(Rigidbody2D target) {
+		InitializeStat();
+		jumpPower.SetBaseValue(baseJumpPower);
+		this.target = target;
+		mover.InitializeBy(this.target.transform);
+	}
 
-	public static CharacterMover CreateByTarget(Rigidbody2D target) {
-		CharacterMover characterMover = new CharacterMover();
-		characterMover.target = target;
-		characterMover.mover = Mover.CreateByTarget(target.transform);
-		return characterMover;
+	public void InitializeStat() {
+		jumpPower.Clear();
+		mover.InitializeStat();
 	}
 
 	public void SetInAir(bool inAir) {
@@ -72,7 +78,7 @@ public class CharacterMover {
 		if (state == MoveState.WALK) {
 			vector2 += ConvertToVector2(direction);
 		}
-		target.AddForce(vector2 * jumpPower);
+		target.AddForce(vector2 * jumpPower.Value);
 	}
 
 	public void Stop() {

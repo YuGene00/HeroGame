@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HPManager {
+[System.Serializable]
+public class HpManager {
 
 	//max HP
+	[SerializeField]
+	int baseMaxHp;
 	Formula<int> maxHp = new Formula<int>();
 	public Formula<int> MaxHp { get { return maxHp; } }
 
@@ -17,8 +20,14 @@ public class HPManager {
 	const float immortalTime = 1f;
 	WaitForSeconds immortalTimeWait = new WaitForSeconds(immortalTime);
 
-	public HPManager() {
+	public void Initialize() {
+		InitializeStat();
+		maxHp.SetBaseValue(baseMaxHp);
 		currentHp = maxHp.Value;
+	}
+
+	public void InitializeStat() {
+		maxHp.Clear();
 	}
 
 	public void Damaged(int value) {

@@ -2,34 +2,34 @@
 using UnityEditor;
 
 [CustomEditor(typeof(Player))]
-public class PlayerEditor : Editor {
+public class PlayerEditor : CharacterEditor {
 
-	//character move value
-	SerializedProperty baseSpeed;
-	SerializedProperty jumpPower;
+	//editor target
+	Player player;
 
-	void OnEnable() {
-		baseSpeed = serializedObject.FindProperty("characterMover.mover.baseSpeed");
-		jumpPower = serializedObject.FindProperty("characterMover.jumpPower");
+	//skill value
+	int passiveLevel;
+
+	protected override void OnEnable() {
+		base.OnEnable();
+		player = target as Player;
 	}
 
 	public override void OnInspectorGUI() {
-		EditorGUI.BeginChangeCheck();
-		serializedObject.Update();
-		DrawInspector();
-		if (EditorGUI.EndChangeCheck()) {
-			serializedObject.ApplyModifiedProperties();
-			AfterChangeInspector();
-		}
+		base.OnInspectorGUI();
+		DrawAndApply(DrawSkill, AfterChangeSkill);
 	}
 
-	void DrawInspector() {
-		baseSpeed.floatValue = EditorGUILayout.FloatField("기본 이동속도", baseSpeed.floatValue);
-		EditorGUILayout.LabelField("최종 이동속도", (target as Player).characterMover.mover.Speed.Value.ToString());
-		jumpPower.floatValue = EditorGUILayout.FloatField("점프 파워", jumpPower.floatValue);
+	void DrawSkill() {
+		EditorGUILayout.LabelField("스킬");
+		++EditorGUI.indentLevel;
+		EditorGUI.BeginDisabledGroup(!Application.isPlaying);
+		passiveLevel = EditorGUILayout.IntSlider("패시브 레벨", player.SkillManager.PassiveLevel, 0, 10);
+		EditorGUI.EndDisabledGroup();
+		--EditorGUI.indentLevel;
 	}
 
-	void AfterChangeInspector() {
-		(target as Player).characterMover.mover.Speed.SetBaseValue(baseSpeed.floatValue);
+	void AfterChangeSkill() {
+		player.SkillManager.PassiveLevel = passiveLevel;
 	}
 }
