@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class CharacterMover {
 
-	//target Rigidbody
+	//target Rigidbody2D
 	Rigidbody2D target;
 
 	//mover

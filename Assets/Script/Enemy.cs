@@ -5,7 +5,7 @@ using UnityEngine;
 public class Enemy : Character {
 
 	//AI
-	AI ai = new AI();
+	Ai ai = new Ai();
 
 	//Attacker
 	[SerializeField]
@@ -15,5 +15,10 @@ public class Enemy : Character {
 	new void Awake() {
 		base.Awake();
 		attacker.Initialize();
+	}
+
+	public new void ResetStat() {
+		base.ResetStat();
+		attacker.InitializeStat();
 	}
 }

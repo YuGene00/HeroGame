@@ -26,7 +26,7 @@ public class Player : Character {
 		skillManager.RunUnique();
 	}
 
-	public override void Damaged(int value) {
+	public new void Damaged(int value) {
 		EventManager.Instance.Result.IncreaseHitCount();
 		base.Damaged(value);
 	}

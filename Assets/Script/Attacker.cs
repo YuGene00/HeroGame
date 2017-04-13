@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Attacker : MonoBehaviour {
+[System.Serializable]
+public class Attacker {
 
 	//attack value
 	[SerializeField]

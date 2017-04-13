@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider), typeof(Rigidbody), typeof(Animator))]
+[RequireComponent(typeof(Animator), typeof(Rigidbody2D))]
 public class Stone : MonoBehaviour {
 
 	//animation

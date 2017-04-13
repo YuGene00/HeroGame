@@ -52,7 +52,7 @@ public class Character : MonoBehaviour {
 		hpManager.InitializeStat();
 	}
 
-	public virtual void Damaged(int value) {
+	public void Damaged(int value) {
 		hpManager.Damaged(value);
 		if (hpManager.CurrentHp <= 0) {
 			animationManager.Animate(AnimationManager.AnimationType.DIE);

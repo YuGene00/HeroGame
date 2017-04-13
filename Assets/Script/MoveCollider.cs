@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider), typeof(Rigidbody))]
+[RequireComponent(typeof(Collider2D))]
 public class MoveCollider : MonoBehaviour {
 
 	//parent's CharacterMover

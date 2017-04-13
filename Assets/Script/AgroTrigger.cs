@@ -7,7 +7,7 @@ public class AgroTrigger : MonoBehaviour {
 
 	//parent's AI
 	[SerializeField]
-	AI ai;
+	Ai ai;
 
 	void OnTriggerEnter(Collider collision) {
 		ai.SetAgro(true);

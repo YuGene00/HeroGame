@@ -17,7 +17,7 @@ public class EnemyEditor : CharacterEditor {
 	}
 
 	void InitializeAtk() {
-		baseAtk = serializedObject.FindProperty("Attacker.baseAtk");
+		baseAtk = serializedObject.FindProperty("attacker.baseAtk");
 		atkFormula = enemy.Attacker.Atk;
 	}
 
