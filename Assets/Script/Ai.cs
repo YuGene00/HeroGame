@@ -4,17 +4,21 @@ using UnityEngine;
 
 public class Ai {
 
-	//play Ai flag
+	//target Enemy
+	Enemy target;
+
+	//flag for play Ai
 	public bool Play { get; set; }
 	WaitUntil playWait;
 
-	//check agro flag
+	//flag for check agro
 	bool isAgro = false;
 
-	//in border flag
+	//flag for in border
 	bool isInBorder = false;
 
-	public void Initialize() {
+	public void InitializeBy(Enemy target) {
+		this.target = target;
 		Play = true;
 		playWait = new WaitUntil(() => Play);
 		CoroutineDelegate.Instance.StartCoroutine(RunAi());
@@ -36,7 +40,21 @@ public class Ai {
 	}
 
 	void Wonder() {
-		
+		CharacterMover.Direction direction = target.Direction;
+		if (isInBorder) {
+			//direction = GetReverseDirection(direction);
+			isInBorder = false;
+		}
+		target.WalkTo(direction);
+	}
+
+	CharacterMover.Direction GetReverseDirection(CharacterMover.Direction direction) {
+		switch (direction) {
+			case CharacterMover.Direction.LEFT:
+				return CharacterMover.Direction.RIGHT;
+			default:
+				return CharacterMover.Direction.LEFT;
+		}
 	}
 
 	public void SetAgro(bool isAgro) {

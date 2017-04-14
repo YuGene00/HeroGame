@@ -2,18 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(Animator), typeof(SpriteRenderer), typeof(Rigidbody2D))]
 public class Character : MonoBehaviour {
 
 	//move
-	SpriteRenderer spriteRenderer;
+	Transform trans;
 	[SerializeField]
 	CharacterMover characterMover = new CharacterMover();
 	public CharacterMover CharacterMover { get { return characterMover; } }
 
+	//direction
+	public CharacterMover.Direction Direction {
+		get {
+			if (trans.localScale.x >= 0f) {
+				return CharacterMover.Direction.LEFT;
+			} else {
+				return CharacterMover.Direction.RIGHT;
+			}
+		}
+	}
+
 	//animation
 	AnimationManager animationManager = new AnimationManager();
+	public AnimationManager AnimationManager { get { return animationManager; } }
 
 	//HP
 	[SerializeField]
@@ -21,17 +32,35 @@ public class Character : MonoBehaviour {
 	public HpManager HpManager { get { return hpManager; } }
 
 	protected void Awake() {
-		spriteRenderer = GetComponent<SpriteRenderer>();
+		trans = transform;
 		characterMover.InitializeBy(GetComponent<Rigidbody2D>());
 		animationManager.InitializeBy(GetComponent<Animator>());
 		hpManager.Initialize();
 	}
 
 	public void WalkTo(CharacterMover.Direction direction) {
-		spriteRenderer.flipX = !spriteRenderer.flipX;
+		SetRotation(direction);
 		characterMover.WalkTo(direction);
 		if (characterMover.State != CharacterMover.MoveState.JUMP) {
 			animationManager.Animate(AnimationManager.AnimationType.WALK);
+		}
+	}
+
+	void SetRotation(CharacterMover.Direction direction) {
+		if (Direction == direction) {
+			return;
+		}
+
+		Vector3 scale = trans.localScale;
+		switch (direction) {
+			case CharacterMover.Direction.LEFT:
+				scale.x = Mathf.Abs(scale.x);
+				trans.localScale = scale;
+				break;
+			case CharacterMover.Direction.RIGHT:
+				scale.x = -Mathf.Abs(scale.x);
+				trans.localScale = scale;
+				break;
 		}
 	}
 

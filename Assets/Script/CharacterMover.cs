@@ -22,7 +22,7 @@ public class CharacterMover {
 	public enum MoveState {
 		STAY, WALK, JUMP
 	}
-	MoveState state = MoveState.STAY;
+	MoveState state = MoveState.JUMP;
 	public MoveState State { get { return state; } }
 
 	//jump power
@@ -61,16 +61,12 @@ public class CharacterMover {
 	}
 
 	Vector2 ConvertToVector2(Direction direction) {
-		Vector2 vector2 = Vector2.zero;
 		switch (direction) {
 			case Direction.LEFT:
-				vector2 = Vector2.left;
-				break;
-			case Direction.RIGHT:
-				vector2 = Vector2.right;
-				break;
+				return Vector2.left;
+			default:
+				return Vector2.right;
 		}
-		return vector2;
 	}
 
 	public void JumpTo(Direction direction) {

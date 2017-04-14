@@ -11,7 +11,7 @@ public class Formula<T> {
 	Operation baseOperation;
 	Operation tailOperation;
 
-	//auto calculate flag
+	//flag for auto calculate
 	public bool AutoCalculate { get; set; }
 
 	//return value

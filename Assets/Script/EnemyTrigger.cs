@@ -5,21 +5,22 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class EnemyTrigger : MonoBehaviour {
 
-	//parent's Ai
-	[SerializeField]
-	Ai ai;
+	//parent
+	Enemy parent;
 
-	//parent's Attacker
-	[SerializeField]
-	Attacker attacker;
+	void Awake() {
+		parent = transform.parent.GetComponent<Enemy>();
+	}
 
 	void OnTriggerEnter2D(Collider2D collision) {
 		if (collision.CompareTag("Border")) {
-			ai.ReachToBorder();
+			parent.Ai.ReachToBorder();
 		}
 	}
 
 	void OnTriggerStay2D(Collider2D collision) {
-		Player.Instance.Damaged(attacker.Atk.Value);
+		if (collision.CompareTag("Player")) {
+			Player.Instance.Damaged(parent.Attacker.Atk.Value);
+		}
 	}
 }

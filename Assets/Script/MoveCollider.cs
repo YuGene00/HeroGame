@@ -5,25 +5,24 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class MoveCollider : MonoBehaviour {
 
-	//parent's CharacterMover
-	[SerializeField]
-	CharacterMover characterMover;
+	//parent
+	Character parent;
 
-	//parent's AnimationManager
-	[SerializeField]
-	AnimationManager animationManager;
+	void Awake() {
+		parent = transform.parent.GetComponent<Character>();
+	}
 
 	protected virtual void OnCollisionEnter2D(Collision2D collision) {
-		if (characterMover.State == CharacterMover.MoveState.JUMP) {
-			characterMover.SetInAir(!hasFootContact(collision));
-			animationManager.Animate(AnimationManager.AnimationType.STAY);
+		if (parent.CharacterMover.State == CharacterMover.MoveState.JUMP) {
+			parent.CharacterMover.SetInAir(!hasFootContact(collision));
+			parent.AnimationManager.Animate(AnimationManager.AnimationType.STAY);
 		}
 	}
 
 	protected virtual void OnCollisionExit2D(Collision2D collision) {
-		if (characterMover.State != CharacterMover.MoveState.JUMP) {
-			characterMover.SetInAir(!hasFootContact(collision));
-			animationManager.Animate(AnimationManager.AnimationType.JUMP);
+		if (parent.CharacterMover.State != CharacterMover.MoveState.JUMP) {
+			parent.CharacterMover.SetInAir(!hasFootContact(collision));
+			parent.AnimationManager.Animate(AnimationManager.AnimationType.JUMP);
 		}
 	}
 

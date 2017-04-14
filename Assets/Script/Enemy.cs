@@ -6,6 +6,7 @@ public class Enemy : Character {
 
 	//AI
 	Ai ai = new Ai();
+	public Ai Ai { get { return ai; } }
 
 	//Attacker
 	[SerializeField]
@@ -14,6 +15,7 @@ public class Enemy : Character {
 
 	new void Awake() {
 		base.Awake();
+		ai.InitializeBy(this);
 		attacker.Initialize();
 	}
 
