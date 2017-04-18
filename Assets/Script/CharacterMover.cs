@@ -15,7 +15,7 @@ public class CharacterMover {
 
 	//enum for move direction
 	public enum Direction {
-		LEFT, RIGHT
+		NONE, LEFT, RIGHT
 	}
 
 	//move state
@@ -70,11 +70,15 @@ public class CharacterMover {
 	}
 
 	public void JumpTo(Direction direction) {
+		if (state == MoveState.JUMP) {
+			return;
+		}
 		Vector2 vector2 = Vector2.up;
 		if (state == MoveState.WALK) {
 			vector2 += ConvertToVector2(direction);
 		}
-		target.AddForce(vector2 * jumpPower.Value);
+		target.velocity = Vector2.zero;
+		target.AddForce(vector2 * jumpPower.Value, ForceMode2D.Impulse);
 	}
 
 	public void Stop() {

@@ -12,14 +12,14 @@ public class EnemyTrigger : MonoBehaviour {
 		parent = transform.parent.GetComponent<Enemy>();
 	}
 
-	void OnTriggerEnter2D(Collider2D collision) {
-		if (collision.CompareTag("Border")) {
+	void OnTriggerEnter2D(Collider2D collider) {
+		if (collider.CompareTag("Border")) {
 			parent.Ai.ReachToBorder();
 		}
 	}
 
-	void OnTriggerStay2D(Collider2D collision) {
-		if (collision.CompareTag("Player")) {
+	void OnTriggerStay2D(Collider2D collider) {
+		if (collider.CompareTag("Player")) {
 			Player.Instance.Damaged(parent.Attacker.Atk.Value);
 		}
 	}

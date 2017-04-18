@@ -12,11 +12,11 @@ public class AgroTrigger : MonoBehaviour {
 		parent = transform.parent.GetComponent<Enemy>();
 	}
 
-	void OnTriggerEnter2D(Collider2D collision) {
+	void OnTriggerEnter2D(Collider2D collider) {
 		parent.Ai.SetAgro(true);
 	}
 
-	void OnTriggerExit2D(Collider2D collision) {
+	void OnTriggerExit2D(Collider2D collider) {
 		parent.Ai.SetAgro(false);
 	}
 }

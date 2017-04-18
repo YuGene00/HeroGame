@@ -64,8 +64,8 @@ public class Character : MonoBehaviour {
 		}
 	}
 
-	public void JumpTo(CharacterMover.Direction direction) {
-		characterMover.JumpTo(direction);
+	public void Jump() {
+		characterMover.JumpTo(Direction);
 	}
 
 	public void Stop() {

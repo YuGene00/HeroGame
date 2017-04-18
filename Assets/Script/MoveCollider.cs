@@ -13,15 +13,15 @@ public class MoveCollider : MonoBehaviour {
 	}
 
 	protected virtual void OnCollisionEnter2D(Collision2D collision) {
-		if (parent.CharacterMover.State == CharacterMover.MoveState.JUMP) {
-			parent.CharacterMover.SetInAir(!hasFootContact(collision));
+		if (parent.CharacterMover.State == CharacterMover.MoveState.JUMP && hasFootContact(collision)) {
+			parent.CharacterMover.SetInAir(false);
 			parent.AnimationManager.Animate(AnimationManager.AnimationType.STAY);
 		}
 	}
 
 	protected virtual void OnCollisionExit2D(Collision2D collision) {
-		if (parent.CharacterMover.State != CharacterMover.MoveState.JUMP) {
-			parent.CharacterMover.SetInAir(!hasFootContact(collision));
+		if (parent.CharacterMover.State != CharacterMover.MoveState.JUMP && !hasFootContact(collision)) {
+			parent.CharacterMover.SetInAir(true);
 			parent.AnimationManager.Animate(AnimationManager.AnimationType.JUMP);
 		}
 	}
