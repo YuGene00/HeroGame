@@ -21,18 +21,19 @@ public class Ai {
 	Collider2D moveCollider;
 
 	//constant for paravola
-	float cos;
-	float linearCoefficient;
+	float cosPower;
+	float halfBOfQuadraticFormula;
+	float mass;
 	Collider2D[] tileColliders;
 
-	//variable for paravola
-	float quadraticCoefficient;
+	//variable for paravola related to jump power
+	float aOfQuadraticFormula;
 
 	public void InitializeBy(Enemy target) {
 		this.target = target;
 		moveCollider = this.target.transform.FindChild("MoveCollider").GetComponent<Collider2D>();
 		InitializeConstantForParavola();
-		InitializeVariableForParavola();
+		InitializeVariableForParavolaRelatedToJumpPower();
 		Play = true;
 		playWait = new WaitUntil(() => Play);
 		CoroutineDelegate.Instance.StartCoroutine(RunAi());
@@ -40,8 +41,9 @@ public class Ai {
 
 	public void InitializeConstantForParavola() {
 		const float radian = 45f * 3.141592653589f / 180f;
-		cos = Mathf.Cos(radian);
-		linearCoefficient = Mathf.Tan(radian);
+		cosPower = Mathf.Pow(Mathf.Cos(radian), 2f);
+		halfBOfQuadraticFormula = Mathf.Tan(radian) / 2;
+		mass = target.GetComponent<Rigidbody2D>().mass;
 		InitializeTileColliders();
 	}
 
@@ -53,10 +55,10 @@ public class Ai {
 		}
 	}
 
-	public void InitializeVariableForParavola() {
-		float v0 = target.CharacterMover.JumpPower.Value;
-		float g = -Physics2D.gravity.y;
-		quadraticCoefficient = g / (2 * Mathf.Pow(v0, 2f) * Mathf.Pow(cos, 2f));
+	public void InitializeVariableForParavolaRelatedToJumpPower() {
+		float v0 = target.CharacterMover.JumpPower.Value / mass;
+		float g = Physics2D.gravity.y;
+		aOfQuadraticFormula = g / (2 * Mathf.Pow(v0, 2f) * cosPower);
 	}
 
 	IEnumerator RunAi() {
@@ -75,22 +77,19 @@ public class Ai {
 	}
 
 	bool CanGoToHigher(CharacterMover.Direction direction) {
+		float v = target.GetComponent<Rigidbody2D>().velocity.magnitude;
 		for (int i = 0; i < tileColliders.Length; ++i) {
 			Vector2 center = tileColliders[i].bounds.center - moveCollider.bounds.center;
 			float xOffset = tileColliders[i].bounds.size.x / 2f;
 			float moveColliderHalfWidth = moveCollider.bounds.size.x / 2f;
 			float tileX1 = center.x - xOffset - moveColliderHalfWidth;
 			float tileX2 = center.x + xOffset + moveColliderHalfWidth;
-			float tileY = center.y + moveCollider.bounds.size.y / 2f;
+			float tileY = center.y + (tileColliders[i].bounds.size.y + moveCollider.bounds.size.y) / 2f;
 			switch (direction) {
 				case CharacterMover.Direction.LEFT:
-					tileX1 = -tileX1;
-					tileX2 = -tileX2;
-					DoesLineMeetParavolaInY(tileX1, tileX2, tileY);
-					break;
+					return DoesLineMeetParavolaAtY(-tileX2, -tileX1, tileY);
 				case CharacterMover.Direction.RIGHT:
-					DoesLineMeetParavolaInY(tileX1, tileX2, tileY);
-					break;
+					return DoesLineMeetParavolaAtY(tileX1, tileX2, tileY);
 				case CharacterMover.Direction.NONE:
 
 					break;
@@ -99,14 +98,16 @@ public class Ai {
 		return false;
 	}
 
-	bool DoesLineMeetParavolaInY(float lineX1, float lineX2, float y) {
-		float value1, value2;
-		value1 = Mathf.Sqrt((Mathf.Pow(linearCoefficient, 2f) - 4 * quadraticCoefficient * y) / 4 * Mathf.Pow(quadraticCoefficient, 2f));
-		value2 = -value1;
-		float extraTerm = linearCoefficient / (2 * quadraticCoefficient);
-		value1 += extraTerm;
-		value2 += extraTerm;
-		return lineX1 <= value1 && value1 <= lineX2;
+	bool DoesLineMeetParavolaAtY(float lineX1, float lineX2, float y) {
+		y = 0;
+		float determinationValue = Mathf.Pow(halfBOfQuadraticFormula, 2f) - aOfQuadraticFormula * -y;
+		if (determinationValue <= 0) {
+			return false;
+		}
+
+		float sqrtOfDeterminationValue = Mathf.Sqrt(determinationValue);
+		float value = (-halfBOfQuadraticFormula - sqrtOfDeterminationValue) / aOfQuadraticFormula;
+		return lineX1 <= value && value <= lineX2;
 	}
 
 	void Wonder() {
@@ -116,7 +117,10 @@ public class Ai {
 			isInBorder = false;
 		}
 		target.WalkTo(direction);
-		CanGoToHigher(direction);
+		if (CanGoToHigher(direction)) {
+			return;
+		}
+		target.Jump();
 	}
 
 	CharacterMover.Direction GetReverseDirection(CharacterMover.Direction direction) {

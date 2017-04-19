@@ -16,6 +16,19 @@ public class AnimationManager {
 	}
 
 	public void Animate(AnimationType animationType) {
+		InitializeAnimationBool();
+		switch (animationType) {
+			case AnimationType.STAY:
+				target.SetBool("Stay", true);
+				break;
+			case AnimationType.WALK:
+				target.SetBool("Walk", true);
+				break;
+		}
+	}
 
+	void InitializeAnimationBool() {
+		target.SetBool("Stay", false);
+		target.SetBool("Walk", false);
 	}
 }

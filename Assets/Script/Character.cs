@@ -41,9 +41,7 @@ public class Character : MonoBehaviour {
 	public void WalkTo(CharacterMover.Direction direction) {
 		SetRotation(direction);
 		characterMover.WalkTo(direction);
-		if (characterMover.State != CharacterMover.MoveState.JUMP) {
-			animationManager.Animate(AnimationManager.AnimationType.WALK);
-		}
+		AnimateByMoveState();
 	}
 
 	void SetRotation(CharacterMover.Direction direction) {
@@ -64,12 +62,29 @@ public class Character : MonoBehaviour {
 		}
 	}
 
+	public void AnimateByMoveState() {
+		AnimationManager.AnimationType animationType = AnimationManager.AnimationType.STAY;
+		switch (characterMover.State) {
+			case CharacterMover.MoveState.STAY:
+				animationType = AnimationManager.AnimationType.STAY;
+				break;
+			case CharacterMover.MoveState.WALK:
+				animationType = AnimationManager.AnimationType.WALK;
+				break;
+			case CharacterMover.MoveState.JUMP:
+				animationType = AnimationManager.AnimationType.STAY;
+				break;
+		}
+		Animate(animationType);
+	}
+
 	public void Jump() {
 		characterMover.JumpTo(Direction);
 	}
 
 	public void Stop() {
 		characterMover.Stop();
+		AnimateByMoveState();
 	}
 
 	public void Animate(AnimationManager.AnimationType animation) {

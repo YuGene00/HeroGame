@@ -47,6 +47,7 @@ public class CharacterMover {
 		if (inAir) {
 			state = MoveState.JUMP;
 		} else {
+			target.velocity = Vector2.zero;
 			state = MoveState.STAY;
 		}
 	}
@@ -82,6 +83,8 @@ public class CharacterMover {
 	}
 
 	public void Stop() {
-		state = MoveState.STAY;
+		if (state == MoveState.WALK) {
+			state = MoveState.STAY;
+		}
 	}
 }
