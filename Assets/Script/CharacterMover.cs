@@ -31,9 +31,16 @@ public class CharacterMover {
 	Formula<float> jumpPower = new Formula<float>();
 	public Formula<float> JumpPower { get { return jumpPower; } }
 
+	//variable for calculating jump vector
+	const float JUMPDEGREE = 45f;
+	public const float JUMPDEGREERADIAN = JUMPDEGREE * 3.141592653589f / 180f;
+	float cos;
+	float sin;
+
 	public void InitializeBy(Rigidbody2D target) {
 		InitializeStat();
 		jumpPower.SetBaseValue(baseJumpPower);
+		InitializeConstantForJumpVector();
 		this.target = target;
 		mover.InitializeBy(this.target.transform);
 	}
@@ -41,6 +48,11 @@ public class CharacterMover {
 	public void InitializeStat() {
 		jumpPower.Clear();
 		mover.InitializeStat();
+	}
+
+	void InitializeConstantForJumpVector() {
+		cos = Mathf.Cos(JUMPDEGREERADIAN);
+		sin = Mathf.Sin(JUMPDEGREERADIAN);
 	}
 
 	public void SetInAir(bool inAir) {
@@ -74,12 +86,21 @@ public class CharacterMover {
 		if (state == MoveState.JUMP) {
 			return;
 		}
-		Vector2 vector2 = Vector2.up;
-		if (state == MoveState.WALK) {
-			vector2 += ConvertToVector2(direction);
+		target.velocity = CalculateJumpVector(direction);
+	}
+
+	Vector2 CalculateJumpVector(Direction direction) {
+		Vector2 jumpVector;
+		if (state == MoveState.STAY) {
+			jumpVector = Vector2.up;
+		} else {
+			if (direction == Direction.LEFT) {
+				jumpVector = new Vector2(-cos, sin);
+			} else {
+				jumpVector = new Vector2(cos, sin);
+			}
 		}
-		target.velocity = Vector2.zero;
-		target.AddForce(vector2 * jumpPower.Value, ForceMode2D.Impulse);
+		return jumpVector * jumpPower.Value;
 	}
 
 	public void Stop() {

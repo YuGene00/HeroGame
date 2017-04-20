@@ -21,13 +21,17 @@ public class TerrainTrigger : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
-		Vector2 betweenExpected = (collider.bounds.size + terrainCollider.bounds.size) / 2f;
-		float gradientExpected = betweenExpected.y / betweenExpected.x;
-		Vector2 betweenActual = (collider.bounds.center - terrainCollider.bounds.center) / 2;
-		float gradientActual = betweenActual.y / betweenActual.x;
-		if (betweenActual.y >= 0 && Mathf.Abs(gradientExpected) <= Mathf.Abs(gradientActual)) {
+		if (IsVerticalCollisionBy(collider)) {
 			Physics2D.IgnoreCollision(terrainCollider, collider, false);
 		}
+	}
+
+	bool IsVerticalCollisionBy(Collider2D collider) {
+		Vector2 betweenExpected = (collider.bounds.size + terrainCollider.bounds.size) * 0.5f;
+		float gradientExpected = betweenExpected.y / betweenExpected.x;
+		Vector2 betweenActual = (collider.bounds.center - terrainCollider.bounds.center) * 0.5f;
+		float gradientActual = betweenActual.y / betweenActual.x;
+		return betweenActual.y >= 0 && Mathf.Abs(gradientExpected) <= Mathf.Abs(gradientActual);
 	}
 
 	void OnTriggerExit2D(Collider2D collider) {

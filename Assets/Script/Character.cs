@@ -11,6 +11,9 @@ public class Character : MonoBehaviour {
 	CharacterMover characterMover = new CharacterMover();
 	public CharacterMover CharacterMover { get { return characterMover; } }
 
+	//position
+	public Vector2 Position { get { return trans.position; } }
+
 	//direction
 	public CharacterMover.Direction Direction {
 		get {

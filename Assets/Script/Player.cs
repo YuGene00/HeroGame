@@ -27,7 +27,7 @@ public class Player : Character {
 	}
 
 	public new void Damaged(int value) {
-		EventManager.Instance.Result.IncreaseHitCount();
+		//EventManager.Instance.Result.IncreaseHitCount();
 		base.Damaged(value);
 	}
 
