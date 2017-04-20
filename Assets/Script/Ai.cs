@@ -128,6 +128,50 @@ public class Ai {
 		}
 	}
 
+	bool CanGoToHigher(CharacterMover.Direction direction) {
+		for (int i = 0; i < tileColliders.Length; ++i) {
+			if (IsColliderInJumpPath(tileColliders[i], direction)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool IsColliderInJumpPath(Collider2D collider, CharacterMover.Direction direction) {
+		Vector2 center = collider.bounds.center - moveCollider.bounds.center;
+		float tileY = center.y + (collider.bounds.size.y + moveCollider.bounds.size.y) * 0.5f;
+		Vector2 quarterSizeOfMoveCollider = halfSizeOfMoveCollider * 0.5f;
+		if (tileY <= quarterSizeOfMoveCollider.y) {
+			return false;
+		}
+		float xOffset = collider.bounds.size.x * 0.5f;
+		float tileX1 = center.x - xOffset - quarterSizeOfMoveCollider.x;
+		float tileX2 = center.x + xOffset + quarterSizeOfMoveCollider.x;
+		switch (direction) {
+			case CharacterMover.Direction.LEFT:
+				return IsLineInParavolaAtY(-tileX2, -tileX1, tileY);
+			case CharacterMover.Direction.RIGHT:
+				return IsLineInParavolaAtY(tileX1, tileX2, tileY);
+			default:
+				return IsLineInVerticalAtY(tileX1, tileX2, tileY);
+		}
+	}
+
+	bool IsLineInParavolaAtY(float lineX1, float lineX2, float y) {
+		float determinationValue = Mathf.Pow(halfBOfQuadraticFormula, 2f) - aOfQuadraticFormula * -y;
+		if (determinationValue <= 0) {
+			return false;
+		}
+
+		float sqrtOfDeterminationValue = Mathf.Sqrt(determinationValue);
+		float value = (-halfBOfQuadraticFormula - sqrtOfDeterminationValue) / aOfQuadraticFormula;
+		return lineX1 <= value && value <= lineX2;
+	}
+
+	bool IsLineInVerticalAtY(float lineX1, float lineX2, float y) {
+		return lineX1 < 0 && 0 < lineX2 && y < highestHeight;
+	}
+
 	bool CanGoToHorizontal(CharacterMover.Direction direction) {
 		for (int i = 0; i < tileColliders.Length; ++i) {
 			if (IsColliderInNearSpace(tileColliders[i], direction)) {
@@ -161,49 +205,6 @@ public class Ai {
 		return tileX1 < spaceNearPlayerX2 && spaceNearPlayerX1 < tileX2;
 	}
 
-	bool CanGoToHigher(CharacterMover.Direction direction) {
-		for (int i = 0; i < tileColliders.Length; ++i) {
-			if (IsColliderInJumpPath(tileColliders[i], direction)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool IsColliderInJumpPath(Collider2D collider, CharacterMover.Direction direction) {
-		Vector2 center = collider.bounds.center - moveCollider.bounds.center;
-		float tileY = center.y + (collider.bounds.size.y + moveCollider.bounds.size.y) * 0.5f;
-		if (tileY <= halfSizeOfMoveCollider.y) {
-			return false;
-		}
-		float xOffset = collider.bounds.size.x * 0.5f;
-		float tileX1 = center.x - xOffset - halfSizeOfMoveCollider.x;
-		float tileX2 = center.x + xOffset + halfSizeOfMoveCollider.x;
-		switch (direction) {
-			case CharacterMover.Direction.LEFT:
-				return IsLineInParavolaAtY(-tileX2, -tileX1, tileY);
-			case CharacterMover.Direction.RIGHT:
-				return IsLineInParavolaAtY(tileX1, tileX2, tileY);
-			default:
-				return IsLineInVerticalAtY(tileX1, tileX2, tileY);
-		}
-	}
-
-	bool IsLineInParavolaAtY(float lineX1, float lineX2, float y) {
-		float determinationValue = Mathf.Pow(halfBOfQuadraticFormula, 2f) - aOfQuadraticFormula * -y;
-		if (determinationValue <= 0) {
-			return false;
-		}
-
-		float sqrtOfDeterminationValue = Mathf.Sqrt(determinationValue);
-		float value = (-halfBOfQuadraticFormula - sqrtOfDeterminationValue) / aOfQuadraticFormula;
-		return lineX1 <= value && value <= lineX2;
-	}
-
-	bool IsLineInVerticalAtY(float lineX1, float lineX2, float y) {
-		return lineX1 < 0 && 0 < lineX2 && y < highestHeight;
-	}
-
 	void JumpTo(CharacterMover.Direction direction) {
 		switch (direction) {
 			case CharacterMover.Direction.NONE:
@@ -218,6 +219,10 @@ public class Ai {
 
 	int GetHorizontalJumpBy(Vector2 distanceToPlayer) {
 		int jumpDirection = -1;
+		if(Mathf.Abs(distanceToPlayer.x) < halfSizeOfMoveCollider.x) {
+			return jumpDirection;
+		}
+
 		if (distanceToPlayer.x < 0) {
 			if (ReachedBorder == CharacterMover.Direction.LEFT
 				&& !CanGoToHorizontal(CharacterMover.Direction.LEFT)) {

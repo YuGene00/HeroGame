@@ -32,7 +32,7 @@ public class CharacterMover {
 	public Formula<float> JumpPower { get { return jumpPower; } }
 
 	//variable for calculating jump vector
-	const float JUMPDEGREE = 45f;
+	const float JUMPDEGREE = 80f;
 	public const float JUMPDEGREERADIAN = JUMPDEGREE * 3.141592653589f / 180f;
 	float cos;
 	float sin;
