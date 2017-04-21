@@ -1,0 +1,48 @@
+﻿# git ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+# For a project mostly in C, the following would be a good set of
+# exclude patterns (uncomment them if you want to use them):
+# *.[oa]
+# *~
+############################################################
+ # ---------------[ Unity generated ]------------------ #
+Temp/
+Obj/
+UnityGenerated/
+Library/
+Assets/AssetStoreTools*
+ 
+# ----[ Visual Studio / MonoDevelop generated ]------- #
+ 
+ExportedObj/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.svd
+*.pidb
+*.booproj
+ 
+# -------------[ OS generated ]------------------------ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+#-------------[ Unity3d generated meta files ] -------------------------#
+*.pidb.meta
+
+#-------------[ Unity3d generated files On Crash Reports] -------------------------#
+sysinfo.txt
+
+#-------------[ Builds ] -------------------#
+*.apk
+*.unitypackage
+output_log.txt
