@@ -22,6 +22,7 @@ public class Ai {
 
 	//common constant for path calculate
 	Vector2 halfSizeOfMoveCollider;
+	Vector2 quarterSizeOfMoveCollider;
 
 	//constant for paravola
 	float cosPower;
@@ -47,6 +48,7 @@ public class Ai {
 
 	public void InitializeConstantForPathCalcualte() {
 		halfSizeOfMoveCollider = moveCollider.bounds.size * 0.5f;
+		quarterSizeOfMoveCollider = halfSizeOfMoveCollider * 0.5f;
 		cosPower = Mathf.Pow(Mathf.Cos(CharacterMover.JUMPDEGREERADIAN), 2f);
 		halfBOfQuadraticFormula = Mathf.Tan(CharacterMover.JUMPDEGREERADIAN) * 0.5f;
 		InitializeTileColliders();
@@ -81,9 +83,9 @@ public class Ai {
 	void TracePlayer() {
 		Vector2 distanceToPlayer = Player.Instance.Position - target.Position;
 		int jumpDirection = -1;
-		if (0 < distanceToPlayer.y) {
+		if (quarterSizeOfMoveCollider.y < distanceToPlayer.y) {
 			jumpDirection = GetPossibleJumpBy(distanceToPlayer);
-		} else if (-halfSizeOfMoveCollider.y < distanceToPlayer.y) {
+		} else if (-quarterSizeOfMoveCollider.y < distanceToPlayer.y) {
 			jumpDirection = GetHorizontalJumpBy(distanceToPlayer);
 		}
 
@@ -107,10 +109,10 @@ public class Ai {
 		} else {
 			if (distanceToPlayer.x < 0) {
 				jumpDirection = GetPossibleJumpAfterCheckFirstSecondThirdDirection(CharacterMover.Direction.LEFT,
-					CharacterMover.Direction.RIGHT, CharacterMover.Direction.NONE);
+					CharacterMover.Direction.NONE, CharacterMover.Direction.RIGHT);
 			} else {
 				jumpDirection = GetPossibleJumpAfterCheckFirstSecondThirdDirection(CharacterMover.Direction.RIGHT,
-					CharacterMover.Direction.LEFT, CharacterMover.Direction.NONE);
+					CharacterMover.Direction.NONE, CharacterMover.Direction.LEFT);
 			}
 		}
 		return jumpDirection;
@@ -140,7 +142,6 @@ public class Ai {
 	bool IsColliderInJumpPath(Collider2D collider, CharacterMover.Direction direction) {
 		Vector2 center = collider.bounds.center - moveCollider.bounds.center;
 		float tileY = center.y + (collider.bounds.size.y + moveCollider.bounds.size.y) * 0.5f;
-		Vector2 quarterSizeOfMoveCollider = halfSizeOfMoveCollider * 0.5f;
 		if (tileY <= quarterSizeOfMoveCollider.y) {
 			return false;
 		}
@@ -219,7 +220,7 @@ public class Ai {
 
 	int GetHorizontalJumpBy(Vector2 distanceToPlayer) {
 		int jumpDirection = -1;
-		if(Mathf.Abs(distanceToPlayer.x) < halfSizeOfMoveCollider.x) {
+		if(Mathf.Abs(distanceToPlayer.x) < moveCollider.bounds.size.x * 2f) {
 			return jumpDirection;
 		}
 
