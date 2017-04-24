@@ -17,8 +17,47 @@ public class Ai {
 	//flag for in border
 	public CharacterMover.Direction ReachedBorder { get; set; }
 
-	//Collider2D for parent's MoveCollider
-	Collider2D moveCollider;
+	//type of move action
+	struct MoveType {
+		public CharacterMover.MoveState moveState;
+		public CharacterMover.Direction direction;
+
+		public MoveType(CharacterMover.MoveState moveState, CharacterMover.Direction direction) {
+			this.moveState = moveState;
+			this.direction = direction;
+		}
+	}
+
+	//delegate for GetMoveAfterCheckX/Y
+	delegate MoveType GetMoveAfterCheck(Vector2 distanceToPlayer);
+
+	//type of path calculate
+	enum HeightType {
+		LOWER, HORIZONTAL, HIGHER
+	}
+	struct PathType {
+		public HeightType heightType;
+		public CharacterMover.Direction direction;
+
+		public PathType(HeightType heightType, CharacterMover.Direction direction) {
+			this.heightType = heightType;
+			this.direction = direction;
+		}
+	}
+
+	//directions for check
+	readonly static CharacterMover.Direction[] directions2 = new CharacterMover.Direction[2];
+	readonly static CharacterMover.Direction[] directions3 = new CharacterMover.Direction[3];
+
+	//tile line for path calculate
+	struct Line {
+		public float x1, x2;
+
+		public Line(float x1, float x2) {
+			this.x1 = x1;
+			this.x2 = x2;
+		}
+	}
 
 	//common constant for path calculate
 	Vector2 halfSizeOfMoveCollider;
@@ -38,7 +77,6 @@ public class Ai {
 	public void InitializeBy(Enemy target) {
 		this.target = target;
 		ReachedBorder = CharacterMover.Direction.NONE;
-		moveCollider = this.target.transform.FindChild("MoveCollider").GetComponent<Collider2D>();
 		InitializeConstantForPathCalcualte();
 		InitializeVariableForPathCalcualteRelatedToJumpPower();
 		Play = true;
@@ -47,7 +85,7 @@ public class Ai {
 	}
 
 	public void InitializeConstantForPathCalcualte() {
-		halfSizeOfMoveCollider = moveCollider.bounds.size * 0.5f;
+		halfSizeOfMoveCollider = target.MoveCollider.bounds.size * 0.5f;
 		quarterSizeOfMoveCollider = halfSizeOfMoveCollider * 0.5f;
 		cosPower = Mathf.Pow(Mathf.Cos(CharacterMover.JUMPDEGREERADIAN), 2f);
 		halfBOfQuadraticFormula = Mathf.Tan(CharacterMover.JUMPDEGREERADIAN) * 0.5f;
@@ -82,83 +120,115 @@ public class Ai {
 
 	void TracePlayer() {
 		Vector2 distanceToPlayer = Player.Instance.Position - target.Position;
-		int jumpDirection = -1;
-		if (quarterSizeOfMoveCollider.y < distanceToPlayer.y) {
-			jumpDirection = GetPossibleJumpBy(distanceToPlayer);
-		} else if (-quarterSizeOfMoveCollider.y < distanceToPlayer.y) {
-			jumpDirection = GetHorizontalJumpBy(distanceToPlayer);
+		MoveType moveType = new MoveType(CharacterMover.MoveState.STAY, CharacterMover.Direction.NONE);
+		GetMoveAfterCheck firstCheck;
+		GetMoveAfterCheck secondCheck;
+
+		if (Mathf.Abs(distanceToPlayer.x) <= distanceToPlayer.y) {
+			firstCheck = GetMoveAfterCheckYBy;
+			secondCheck = GetMoveAfterCheckXBy;
+		} else {
+			firstCheck = GetMoveAfterCheckXBy;
+			secondCheck = GetMoveAfterCheckYBy;
 		}
 
-		if (jumpDirection == -1) {
-			WalkBy(distanceToPlayer);
+		moveType = firstCheck(distanceToPlayer);
+		if (moveType.moveState == CharacterMover.MoveState.STAY) {
+			moveType = secondCheck(distanceToPlayer);
+		}
+
+		MoveCharacterBy(moveType);
+	}
+
+	MoveType GetMoveAfterCheckYBy(Vector2 distanceToPlayer) {
+		if (GetHeightBy(distanceToPlayer.y) == HeightType.HIGHER) {
+			return GetHigherJumpBy(distanceToPlayer);
 		} else {
-			JumpTo((CharacterMover.Direction)jumpDirection);
+			return new MoveType(CharacterMover.MoveState.STAY, CharacterMover.Direction.NONE);
 		}
 	}
 
-	int GetPossibleJumpBy(Vector2 distanceToPlayer) {
-		int jumpDirection = -1;
+	MoveType GetHigherJumpBy(Vector2 distanceToPlayer) {
+		CharacterMover.Direction[] directions;
 		if (Mathf.Abs(distanceToPlayer.x) <= halfSizeOfMoveCollider.x) {
+			directions3[0] = CharacterMover.Direction.NONE;
 			if (distanceToPlayer.x < 0) {
-				jumpDirection = GetPossibleJumpAfterCheckFirstSecondThirdDirection(CharacterMover.Direction.NONE,
-					CharacterMover.Direction.LEFT, CharacterMover.Direction.RIGHT);
+				directions3[1] = CharacterMover.Direction.LEFT;
+				directions3[2] = CharacterMover.Direction.RIGHT;
+				directions = directions3;
 			} else {
-				jumpDirection = GetPossibleJumpAfterCheckFirstSecondThirdDirection(CharacterMover.Direction.NONE,
-					CharacterMover.Direction.RIGHT, CharacterMover.Direction.LEFT);
+				directions3[1] = CharacterMover.Direction.RIGHT;
+				directions3[2] = CharacterMover.Direction.LEFT;
+				directions = directions3;
 			}
 		} else {
 			if (distanceToPlayer.x < 0) {
-				jumpDirection = GetPossibleJumpAfterCheckFirstSecondThirdDirection(CharacterMover.Direction.LEFT,
-					CharacterMover.Direction.NONE, CharacterMover.Direction.RIGHT);
+				directions2[0] = CharacterMover.Direction.LEFT;
+				directions2[1] = CharacterMover.Direction.NONE;
+				directions = directions2;
 			} else {
-				jumpDirection = GetPossibleJumpAfterCheckFirstSecondThirdDirection(CharacterMover.Direction.RIGHT,
-					CharacterMover.Direction.NONE, CharacterMover.Direction.LEFT);
+				directions2[0] = CharacterMover.Direction.RIGHT;
+				directions2[1] = CharacterMover.Direction.NONE;
+				directions = directions2;
 			}
 		}
-		return jumpDirection;
+		return GetPossibleJumpAfterCheckDirections(directions);
 	}
 
-	int GetPossibleJumpAfterCheckFirstSecondThirdDirection(CharacterMover.Direction direction1, CharacterMover.Direction direction2, CharacterMover.Direction direction3) {
-		if (CanGoToHigher(direction1)) {
-			return (int)direction1;
-		} else if (CanGoToHigher(direction2)) {
-			return (int)direction2;
-		} else if (CanGoToHigher(direction3)) {
-			return (int)direction3;
-		} else {
-			return -1;
+	MoveType GetPossibleJumpAfterCheckDirections(CharacterMover.Direction[] directions) {
+		for (int i = 0; i < directions.Length; ++i) {
+			if (CanJumpTo(new PathType(HeightType.HIGHER, directions[i]))) {
+				return new MoveType(CharacterMover.MoveState.JUMP, directions[i]);
+			}
 		}
+		return new MoveType(CharacterMover.MoveState.STAY, CharacterMover.Direction.NONE);
 	}
 
-	bool CanGoToHigher(CharacterMover.Direction direction) {
+	bool CanJumpTo(PathType pathType) {
 		for (int i = 0; i < tileColliders.Length; ++i) {
-			if (IsColliderInJumpPath(tileColliders[i], direction)) {
+			if (IsColliderInJumpPath(tileColliders[i], pathType)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	bool IsColliderInJumpPath(Collider2D collider, CharacterMover.Direction direction) {
-		Vector2 center = collider.bounds.center - moveCollider.bounds.center;
-		float tileY = center.y + (collider.bounds.size.y + moveCollider.bounds.size.y) * 0.5f;
-		if (tileY <= quarterSizeOfMoveCollider.y) {
+	bool IsColliderInJumpPath(Collider2D collider, PathType pathType) {
+		Vector2 center = collider.bounds.center - target.MoveCollider.bounds.center;
+		float tileY = center.y + (collider.bounds.size.y + target.MoveCollider.bounds.size.y) * 0.5f;
+		if (GetHeightBy(tileY) != pathType.heightType) {
 			return false;
 		}
 		float xOffset = collider.bounds.size.x * 0.5f;
 		float tileX1 = center.x - xOffset - quarterSizeOfMoveCollider.x;
 		float tileX2 = center.x + xOffset + quarterSizeOfMoveCollider.x;
-		switch (direction) {
+		switch (pathType.direction) {
+			case CharacterMover.Direction.NONE:
+				return IsLineInVerticalAtY(new Line(tileX1, tileX2), tileY);
 			case CharacterMover.Direction.LEFT:
-				return IsLineInParavolaAtY(-tileX2, -tileX1, tileY);
+				return IsLineInParavolaAtY(new Line(-tileX2, -tileX1), tileY);
 			case CharacterMover.Direction.RIGHT:
-				return IsLineInParavolaAtY(tileX1, tileX2, tileY);
+				return IsLineInParavolaAtY(new Line(tileX1, tileX2), tileY);
 			default:
-				return IsLineInVerticalAtY(tileX1, tileX2, tileY);
+				return false;
 		}
 	}
 
-	bool IsLineInParavolaAtY(float lineX1, float lineX2, float y) {
+	HeightType GetHeightBy(float y) {
+		if (y <= -quarterSizeOfMoveCollider.y) {
+			return HeightType.LOWER;
+		} else if (y < quarterSizeOfMoveCollider.y) {
+			return HeightType.HORIZONTAL;
+		} else {
+			return HeightType.HIGHER;
+		}
+	}
+
+	bool IsLineInVerticalAtY(Line line, float y) {
+		return line.x1 < 0 && 0 < line.x2 && y < highestHeight;
+	}
+
+	bool IsLineInParavolaAtY(Line line, float y) {
 		float determinationValue = Mathf.Pow(halfBOfQuadraticFormula, 2f) - aOfQuadraticFormula * -y;
 		if (determinationValue <= 0) {
 			return false;
@@ -166,26 +236,51 @@ public class Ai {
 
 		float sqrtOfDeterminationValue = Mathf.Sqrt(determinationValue);
 		float value = (-halfBOfQuadraticFormula - sqrtOfDeterminationValue) / aOfQuadraticFormula;
-		return lineX1 <= value && value <= lineX2;
+		return line.x1 <= value && value <= line.x2;
 	}
 
-	bool IsLineInVerticalAtY(float lineX1, float lineX2, float y) {
-		return lineX1 < 0 && 0 < lineX2 && y < highestHeight;
+	MoveType GetMoveAfterCheckXBy(Vector2 distanceToPlayer) {
+		MoveType moveType = new MoveType(CharacterMover.MoveState.STAY, CharacterMover.Direction.NONE);
+		for (int i = (int)HeightType.HORIZONTAL; (int)HeightType.LOWER <= i; --i) {
+			if (moveType.moveState == CharacterMover.MoveState.STAY
+				&& i <= (int)GetHeightBy(distanceToPlayer.y)) {
+				moveType = GetWalkOrJumpToHeightByDistanceToPlayer((HeightType)i, distanceToPlayer);
+			}
+		}
+		return moveType;
 	}
 
-	bool CanGoToHorizontal(CharacterMover.Direction direction) {
+	MoveType GetWalkOrJumpToHeightByDistanceToPlayer(HeightType heightType, Vector2 distanceToPlayer) {
+		MoveType moveType = new MoveType(CharacterMover.MoveState.STAY, CharacterMover.Direction.NONE);
+
+		if (distanceToPlayer.x < 0) {
+			moveType.direction = CharacterMover.Direction.LEFT;
+		} else {
+			moveType.direction = CharacterMover.Direction.RIGHT;
+		}
+
+		if (CanWalkTo(new PathType(heightType, moveType.direction))) {
+			moveType.moveState = CharacterMover.MoveState.WALK;
+		} else if (CanJumpTo(new PathType(heightType, moveType.direction))) {
+			moveType.moveState = CharacterMover.MoveState.JUMP;
+		}
+
+		return moveType;
+	}
+
+	bool CanWalkTo(PathType pathType) {
 		for (int i = 0; i < tileColliders.Length; ++i) {
-			if (IsColliderInNearSpace(tileColliders[i], direction)) {
+			if (IsColliderInWalkPath(tileColliders[i], pathType)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	bool IsColliderInNearSpace(Collider2D collider, CharacterMover.Direction direction) {
+	bool IsColliderInWalkPath(Collider2D collider, PathType pathType) {
 		float tileY = collider.bounds.center.y + collider.bounds.size.y * 0.5f;
-		float gapY = moveCollider.bounds.center.y - halfSizeOfMoveCollider.y - tileY;
-		if (gapY < 0 || halfSizeOfMoveCollider.y <= gapY) {
+		float gapY = target.MoveCollider.bounds.center.y - halfSizeOfMoveCollider.y - tileY;
+		if (GetHeightBy(-gapY) != pathType.heightType) {
 			return false;
 		}
 		float xOffset = collider.bounds.size.x * 0.5f;
@@ -193,17 +288,27 @@ public class Ai {
 		float tileX2 = collider.bounds.center.x + xOffset;
 		float spaceNearPlayerX1 = 0f;
 		float spaceNearPlayerX2 = 0f;
-		switch (direction) {
+		switch (pathType.direction) {
 			case CharacterMover.Direction.LEFT:
-				spaceNearPlayerX2 = moveCollider.bounds.center.x - halfSizeOfMoveCollider.x;
-				spaceNearPlayerX1 = spaceNearPlayerX2 - moveCollider.bounds.size.x;
+				spaceNearPlayerX2 = target.MoveCollider.bounds.center.x;// - halfSizeOfMoveCollider.x;
+				spaceNearPlayerX1 = spaceNearPlayerX2 - target.MoveCollider.bounds.size.x;
 				break;
 			case CharacterMover.Direction.RIGHT:
-				spaceNearPlayerX1 = moveCollider.bounds.center.x + halfSizeOfMoveCollider.x;
-				spaceNearPlayerX2 = spaceNearPlayerX1 + moveCollider.bounds.size.x;
+				spaceNearPlayerX1 = target.MoveCollider.bounds.center.x;// + halfSizeOfMoveCollider.x;
+				spaceNearPlayerX2 = spaceNearPlayerX1 + target.MoveCollider.bounds.size.x;
 				break;
 		}
 		return tileX1 < spaceNearPlayerX2 && spaceNearPlayerX1 < tileX2;
+	}
+
+	void MoveCharacterBy(MoveType moveType) {
+		if (moveType.moveState == CharacterMover.MoveState.WALK) {
+			target.WalkTo(moveType.direction);
+		} else if (moveType.moveState == CharacterMover.MoveState.JUMP) {
+			JumpTo(moveType.direction);
+		} else {
+			target.Stop();
+		}
 	}
 
 	void JumpTo(CharacterMover.Direction direction) {
@@ -211,39 +316,16 @@ public class Ai {
 			case CharacterMover.Direction.NONE:
 				target.Stop();
 				break;
-			default:
-				target.WalkTo(direction);
+			case CharacterMover.Direction.LEFT:
+				target.WalkTo(CharacterMover.Direction.LEFT);
 				break;
+			case CharacterMover.Direction.RIGHT:
+				target.WalkTo(CharacterMover.Direction.RIGHT);
+				break;
+			default:
+				return;
 		}
 		target.Jump();
-	}
-
-	int GetHorizontalJumpBy(Vector2 distanceToPlayer) {
-		int jumpDirection = -1;
-		if(Mathf.Abs(distanceToPlayer.x) < moveCollider.bounds.size.x * 2f) {
-			return jumpDirection;
-		}
-
-		if (distanceToPlayer.x < 0) {
-			if (ReachedBorder == CharacterMover.Direction.LEFT
-				&& !CanGoToHorizontal(CharacterMover.Direction.LEFT)) {
-				jumpDirection = (int)CharacterMover.Direction.LEFT;
-			}
-		} else {
-			if (ReachedBorder == CharacterMover.Direction.RIGHT
-				&& !CanGoToHorizontal(CharacterMover.Direction.RIGHT)) {
-				jumpDirection = (int)CharacterMover.Direction.RIGHT;
-			}
-		}
-		return jumpDirection;
-	}
-
-	void WalkBy(Vector2 distanceToPlayer) {
-		if (distanceToPlayer.x < 0) {
-			target.WalkTo(CharacterMover.Direction.LEFT);
-		} else {
-			target.WalkTo(CharacterMover.Direction.RIGHT);
-		}
 	}
 
 	void Wonder() {

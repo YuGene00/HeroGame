@@ -11,8 +11,13 @@ public class Character : MonoBehaviour {
 	CharacterMover characterMover = new CharacterMover();
 	public CharacterMover CharacterMover { get { return characterMover; } }
 
+	//Collider2D for MoveCollider
+	Collider2D moveCollider;
+	public Collider2D MoveCollider { get { return moveCollider; } }
+	float halfSizeOfMoveColliderY;
+
 	//position
-	public Vector2 Position { get { return trans.position; } }
+	public Vector2 Position { get { return new Vector2(trans.position.x, trans.position.y - halfSizeOfMoveColliderY); } }
 
 	//direction
 	public CharacterMover.Direction Direction {
@@ -37,6 +42,8 @@ public class Character : MonoBehaviour {
 	protected void Awake() {
 		trans = transform;
 		characterMover.InitializeBy(GetComponent<Rigidbody2D>());
+		moveCollider = trans.FindChild("MoveCollider").GetComponent<Collider2D>();
+		halfSizeOfMoveColliderY = moveCollider.bounds.size.y * 0.5f;
 		animationManager.InitializeBy(GetComponent<Animator>());
 		hpManager.Initialize();
 	}
