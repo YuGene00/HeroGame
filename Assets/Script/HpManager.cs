@@ -14,11 +14,6 @@ public class HpManager : MonoBehaviour, IStat {
 	int currentHp;
 	public int CurrentHp { get { return currentHp; } }
 
-	//immortal
-	bool immortal = false;
-	const float immortalTime = 1f;
-	WaitForSeconds immortalTimeWait = new WaitForSeconds(immortalTime);
-
 	void Awake() {
 		InitializeStat();
 		currentHp = maxHp.Value;
@@ -30,16 +25,7 @@ public class HpManager : MonoBehaviour, IStat {
 	}
 
 	public void Damaged(int value) {
-		if (!immortal) {
-			currentHp -= value;
-			CoroutineDelegate.Instance.StartCoroutine(RunImmortal());
-		}
-	}
-
-	IEnumerator RunImmortal() {
-		immortal = true;
-		yield return immortalTime;
-		immortal = false;
+		currentHp -= value;
 	}
 
 	public void Recovery(int value) {

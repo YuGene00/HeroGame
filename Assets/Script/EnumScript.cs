@@ -9,5 +9,5 @@ public enum MoveState {
 }
 
 public enum AnimationType {
-	STAY, WALK, JUMP, DIE
+	STAY, WALK, JUMP, DAMAGED, DIE
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterMover), typeof(AnimationManager), typeof(HpManager))]
-public class Character : MonoBehaviour {
+public class Character : MainScript {
 
 	//Transform
 	Transform trans;
@@ -98,12 +98,13 @@ public class Character : MonoBehaviour {
 		animationManager.Animate(animation);
 	}
 
-	public void ResetStat() {
+	public virtual void ResetStat() {
 		characterMover.InitializeStat();
 		hpManager.InitializeStat();
 	}
 
-	public void Damaged(int value) {
+	public virtual void Damaged(int value) {
+		animationManager.Animate(AnimationType.DAMAGED);
 		hpManager.Damaged(value);
 		if (hpManager.CurrentHp <= 0) {
 			animationManager.Animate(AnimationType.DIE);

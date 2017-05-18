@@ -21,11 +21,23 @@ public class AnimationManager : MonoBehaviour {
 			case AnimationType.WALK:
 				animator.SetBool("Walk", true);
 				break;
+			case AnimationType.JUMP:
+				//animator.SetBool("Jump", true);
+				break;
+			case AnimationType.DAMAGED:
+				//animator.SetBool("Damaged", true);
+				break;
+			case AnimationType.DIE:
+				//animator.SetBool("Die", true);
+				break;
 		}
 	}
 
 	void ResetAnimationBool() {
 		animator.SetBool("Stay", false);
 		animator.SetBool("Walk", false);
+		//animator.SetBool("Jump", false);
+		//animator.SetBool("Damaged", false);
+		//animator.SetBool("Die", false);
 	}
 }

@@ -10,6 +10,9 @@ public class AttackerEditor : EditorFrame {
 	SerializedProperty baseAtk;
 	Formula<int> atkFormula;
 
+	//Attack target Tag
+	SerializedProperty targetTag;
+
 	protected override void OnEnable() {
 		attacker = target as Attacker;
 		InitializeAtkValue();
@@ -18,6 +21,7 @@ public class AttackerEditor : EditorFrame {
 	void InitializeAtkValue() {
 		baseAtk = serializedObject.FindProperty("baseAtk");
 		atkFormula = attacker.Atk;
+		targetTag = serializedObject.FindProperty("targetTag");
 	}
 
 	public override void OnInspectorGUI() {
@@ -30,6 +34,7 @@ public class AttackerEditor : EditorFrame {
 		++EditorGUI.indentLevel;
 		baseAtk.intValue = EditorGUILayout.IntField("기본 공격력", baseAtk.intValue);
 		EditorGUILayout.LabelField("최종 공격력", atkFormula.Value.ToString());
+		targetTag.stringValue = EditorGUILayout.TextField("타겟 태그", targetTag.stringValue);
 		--EditorGUI.indentLevel;
 	}
 

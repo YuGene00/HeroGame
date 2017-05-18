@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Ai), typeof(Attacker))]
+[RequireComponent(typeof(Ai))]
 public class Enemy : Character {
 
 	//AI
@@ -17,7 +17,7 @@ public class Enemy : Character {
 		attacker = GetComponent<Attacker>();
 	}
 
-	public new void ResetStat() {
+	public override void ResetStat() {
 		base.ResetStat();
 		attacker.InitializeStat();
 	}
