@@ -5,18 +5,18 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class AgroTrigger : MonoBehaviour {
 
-	//parent
-	Enemy parent;
+	//parent's Ai
+	Ai aiOfParent;
 
 	void Awake() {
-		parent = transform.parent.GetComponent<Enemy>();
+		aiOfParent = transform.parent.GetComponent<Ai>();
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
-		parent.Ai.SetAgro(true);
+		aiOfParent.SetAgro(true);
 	}
 
 	void OnTriggerExit2D(Collider2D collider) {
-		parent.Ai.SetAgro(false);
+		aiOfParent.SetAgro(false);
 	}
 }

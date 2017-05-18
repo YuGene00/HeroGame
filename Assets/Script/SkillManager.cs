@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillManager {
+public class SkillManager : MonoBehaviour {
 
 	//passive level
 	int passiveLevel;
@@ -15,8 +15,11 @@ public class SkillManager {
 	}
 
 	//skill
+	[SerializeField]
 	Skill[] passiveSkills;
+	[SerializeField]
 	Skill uniqueSkill;
+	[SerializeField]
 	Skill ultimateSkill;
 
 	public void RunPassive() {
@@ -33,7 +36,9 @@ public class SkillManager {
 	
 	#region void RunSkill(Skill[] skills/Skill skill)
 	void RunSkill(Skill[] skills) {
-		
+		for (int i = 0; i < skills.Length; ++i) {
+			skills[i].Run();
+		}
 	}
 
 	void RunSkill(Skill skill) {

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class Mover {
+[RequireComponent(typeof(Rigidbody2D))]
+public class Mover : MonoBehaviour, IStat {
 
-	//target Transform
-	Transform target;
+	//Rigidbody2D
+	protected Rigidbody2D rigid;
 
 	//move speed
 	[SerializeField]
@@ -14,17 +14,18 @@ public class Mover {
 	Formula<float> speed = new Formula<float>();
 	public Formula<float> Speed { get { return speed; } }
 
-	public void InitializeBy(Transform target) {
+	protected void Awake() {
+		rigid = GetComponent<Rigidbody2D>();
 		InitializeStat();
-		speed.SetBaseValue(baseSpeed);
-		this.target = target;
 	}
 
 	public void InitializeStat() {
+		speed.SetBaseValue(baseSpeed);
 		speed.Clear();
 	}
 
 	public void MoveTo(Vector2 direction) {
-		target.Translate(direction * speed.Value * Time.deltaTime);
+		//trans.Translate(direction * speed.Value * Time.deltaTime);
+		rigid.velocity = direction * speed.Value;
 	}
 }

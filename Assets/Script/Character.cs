@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator), typeof(SpriteRenderer), typeof(Rigidbody2D))]
+[RequireComponent(typeof(CharacterMover), typeof(AnimationManager), typeof(HpManager))]
 public class Character : MonoBehaviour {
 
-	//move
+	//Transform
 	Transform trans;
-	[SerializeField]
-	CharacterMover characterMover = new CharacterMover();
-	public CharacterMover CharacterMover { get { return characterMover; } }
+
+	//CharacterMover
+	CharacterMover characterMover;
 
 	//Collider2D for MoveCollider
 	Collider2D moveCollider;
@@ -20,52 +20,49 @@ public class Character : MonoBehaviour {
 	public Vector2 Position { get { return new Vector2(trans.position.x, trans.position.y - halfSizeOfMoveColliderY); } }
 
 	//direction
-	public CharacterMover.Direction Direction {
+	public Direction Direction {
 		get {
 			if (trans.localScale.x >= 0f) {
-				return CharacterMover.Direction.LEFT;
+				return Direction.LEFT;
 			} else {
-				return CharacterMover.Direction.RIGHT;
+				return Direction.RIGHT;
 			}
 		}
 	}
 
-	//animation
-	AnimationManager animationManager = new AnimationManager();
-	public AnimationManager AnimationManager { get { return animationManager; } }
+	//AnimationManager
+	AnimationManager animationManager;
 
-	//HP
-	[SerializeField]
-	HpManager hpManager = new HpManager();
-	public HpManager HpManager { get { return hpManager; } }
+	//HPManager
+	HpManager hpManager;
 
 	protected void Awake() {
 		trans = transform;
-		characterMover.InitializeBy(GetComponent<Rigidbody2D>());
+		characterMover = GetComponent<CharacterMover>();
 		moveCollider = trans.FindChild("MoveCollider").GetComponent<Collider2D>();
 		halfSizeOfMoveColliderY = moveCollider.bounds.size.y * 0.5f;
-		animationManager.InitializeBy(GetComponent<Animator>());
-		hpManager.Initialize();
+		animationManager = GetComponent<AnimationManager>();
+		hpManager = GetComponent<HpManager>();
 	}
 
-	public void WalkTo(CharacterMover.Direction direction) {
+	public void WalkTo(Direction direction) {
 		SetRotation(direction);
 		characterMover.WalkTo(direction);
 		AnimateByMoveState();
 	}
 
-	void SetRotation(CharacterMover.Direction direction) {
+	void SetRotation(Direction direction) {
 		if (Direction == direction) {
 			return;
 		}
 
 		Vector3 scale = trans.localScale;
 		switch (direction) {
-			case CharacterMover.Direction.LEFT:
+			case Direction.LEFT:
 				scale.x = Mathf.Abs(scale.x);
 				trans.localScale = scale;
 				break;
-			case CharacterMover.Direction.RIGHT:
+			case Direction.RIGHT:
 				scale.x = -Mathf.Abs(scale.x);
 				trans.localScale = scale;
 				break;
@@ -73,16 +70,16 @@ public class Character : MonoBehaviour {
 	}
 
 	public void AnimateByMoveState() {
-		AnimationManager.AnimationType animationType = AnimationManager.AnimationType.STAY;
+		AnimationType animationType = AnimationType.STAY;
 		switch (characterMover.State) {
-			case CharacterMover.MoveState.STAY:
-				animationType = AnimationManager.AnimationType.STAY;
+			case MoveState.STAY:
+				animationType = AnimationType.STAY;
 				break;
-			case CharacterMover.MoveState.WALK:
-				animationType = AnimationManager.AnimationType.WALK;
+			case MoveState.WALK:
+				animationType = AnimationType.WALK;
 				break;
-			case CharacterMover.MoveState.JUMP:
-				animationType = AnimationManager.AnimationType.STAY;
+			case MoveState.JUMP:
+				animationType = AnimationType.STAY;
 				break;
 		}
 		Animate(animationType);
@@ -97,7 +94,7 @@ public class Character : MonoBehaviour {
 		AnimateByMoveState();
 	}
 
-	public void Animate(AnimationManager.AnimationType animation) {
+	public void Animate(AnimationType animation) {
 		animationManager.Animate(animation);
 	}
 
@@ -109,7 +106,7 @@ public class Character : MonoBehaviour {
 	public void Damaged(int value) {
 		hpManager.Damaged(value);
 		if (hpManager.CurrentHp <= 0) {
-			animationManager.Animate(AnimationManager.AnimationType.DIE);
+			animationManager.Animate(AnimationType.DIE);
 			DeadAction();
 		}
 	}

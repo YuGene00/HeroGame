@@ -34,7 +34,7 @@ public class InputManager : MonoBehaviour {
 #endif
 
 	void LeftArrow() {
-		Player.Instance.WalkTo(CharacterMover.Direction.LEFT);
+		Player.Instance.WalkTo(Direction.LEFT);
 	}
 
 	void LeftArrowUp() {
@@ -42,7 +42,7 @@ public class InputManager : MonoBehaviour {
 	}
 
 	void RightArrow() {
-		Player.Instance.WalkTo(CharacterMover.Direction.RIGHT);
+		Player.Instance.WalkTo(Direction.RIGHT);
 	}
 
 	void RightArrowUp() {

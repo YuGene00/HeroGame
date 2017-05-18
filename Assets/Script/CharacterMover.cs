@@ -2,26 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class CharacterMover {
-
-	//target Rigidbody2D
-	Rigidbody2D target;
-
-	//mover
-	[SerializeField]
-	Mover mover = new Mover();
-	public Mover Mover { get { return mover; } }
-
-	//enum for move direction
-	public enum Direction {
-		NONE, LEFT, RIGHT
-	}
+public class CharacterMover : Mover {
 
 	//move state
-	public enum MoveState {
-		STAY, WALK, JUMP
-	}
 	MoveState state = MoveState.JUMP;
 	public MoveState State { get { return state; } }
 
@@ -30,36 +13,34 @@ public class CharacterMover {
 	float baseJumpPower;
 	Formula<float> jumpPower = new Formula<float>();
 	public Formula<float> JumpPower { get { return jumpPower; } }
+	[SerializeField]
+	float speedInfluenceRatioToJump = 1;
 
 	//variable for calculating jump vector
-	const float JUMPDEGREE = 80f;
-	public const float JUMPDEGREERADIAN = JUMPDEGREE * 3.141592653589f / 180f;
-	float cos;
-	float sin;
+	Formula<float> jumpVectorX = new Formula<float>();
 
-	public void InitializeBy(Rigidbody2D target) {
+	new void Awake() {
+		base.Awake();
 		InitializeStat();
-		jumpPower.SetBaseValue(baseJumpPower);
 		InitializeConstantForJumpVector();
-		this.target = target;
-		mover.InitializeBy(this.target.transform);
 	}
 
-	public void InitializeStat() {
+	public new void InitializeStat() {
+		base.InitializeStat();
+		jumpPower.SetBaseValue(baseJumpPower);
 		jumpPower.Clear();
-		mover.InitializeStat();
 	}
 
 	void InitializeConstantForJumpVector() {
-		cos = Mathf.Cos(JUMPDEGREERADIAN);
-		sin = Mathf.Sin(JUMPDEGREERADIAN);
+		jumpVectorX.SetBaseValue(Speed);
+		jumpVectorX.CreateMultiplication(speedInfluenceRatioToJump);
 	}
 
 	public void SetInAir(bool inAir) {
 		if (inAir) {
 			state = MoveState.JUMP;
 		} else {
-			target.velocity = Vector2.zero;
+			rigid.velocity = Vector2.zero;
 			state = MoveState.STAY;
 		}
 	}
@@ -70,10 +51,10 @@ public class CharacterMover {
 		}
 
 		state = MoveState.WALK;
-		mover.MoveTo(ConvertToVector2(direction));
+		MoveTo(GetVectorBy(direction));
 	}
 
-	Vector2 ConvertToVector2(Direction direction) {
+	Vector2 GetVectorBy(Direction direction) {
 		switch (direction) {
 			case Direction.LEFT:
 				return Vector2.left;
@@ -86,26 +67,24 @@ public class CharacterMover {
 		if (state == MoveState.JUMP) {
 			return;
 		}
-		target.velocity = CalculateJumpVector(direction);
+		rigid.velocity = GetJumpVectorBy(direction);
 	}
 
-	Vector2 CalculateJumpVector(Direction direction) {
-		Vector2 jumpVector;
-		if (state == MoveState.STAY) {
-			jumpVector = Vector2.up;
-		} else {
+	public Vector2 GetJumpVectorBy(Direction direction) {
+		Vector2 jumpVector = new Vector2(0f, jumpPower.Value);
+		if (state != MoveState.STAY) {
+			jumpVector.x = jumpVectorX.Value;
 			if (direction == Direction.LEFT) {
-				jumpVector = new Vector2(-cos, sin);
-			} else {
-				jumpVector = new Vector2(cos, sin);
+				jumpVector.x = -jumpVector.x;
 			}
 		}
-		return jumpVector * jumpPower.Value;
+		return jumpVector;
 	}
 
 	public void Stop() {
 		if (state == MoveState.WALK) {
 			state = MoveState.STAY;
+			rigid.velocity = Vector2.zero;
 		}
 	}
 }

@@ -10,7 +10,7 @@ public interface IEvent {
 public class InitializeStage : IEvent {
 
 	public void LoadStage(int stageNo) {
-
+		PlayerTracer.InitializeTileColliders();
 	}
 
 	public void Run() {

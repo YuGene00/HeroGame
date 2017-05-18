@@ -2,33 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnimationManager {
+[RequireComponent(typeof(Animator))]
+public class AnimationManager : MonoBehaviour {
 
-	//target Animator
-	Animator target;
+	//Animator
+	Animator animator;
 
-	public enum AnimationType {
-		STAY, WALK, JUMP, DIE
-	}
-
-	public void InitializeBy(Animator target) {
-		this.target = target;
+	void Awake() {
+		animator = GetComponent<Animator>();
 	}
 
 	public void Animate(AnimationType animationType) {
-		InitializeAnimationBool();
+		ResetAnimationBool();
 		switch (animationType) {
 			case AnimationType.STAY:
-				target.SetBool("Stay", true);
+				animator.SetBool("Stay", true);
 				break;
 			case AnimationType.WALK:
-				target.SetBool("Walk", true);
+				animator.SetBool("Walk", true);
 				break;
 		}
 	}
 
-	void InitializeAnimationBool() {
-		target.SetBool("Stay", false);
-		target.SetBool("Walk", false);
+	void ResetAnimationBool() {
+		animator.SetBool("Stay", false);
+		animator.SetBool("Walk", false);
 	}
 }

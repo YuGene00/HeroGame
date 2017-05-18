@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class HpManager {
+public class HpManager : MonoBehaviour, IStat {
 
 	//max HP
 	[SerializeField]
@@ -20,13 +19,13 @@ public class HpManager {
 	const float immortalTime = 1f;
 	WaitForSeconds immortalTimeWait = new WaitForSeconds(immortalTime);
 
-	public void Initialize() {
+	void Awake() {
 		InitializeStat();
-		maxHp.SetBaseValue(baseMaxHp);
 		currentHp = maxHp.Value;
 	}
 
 	public void InitializeStat() {
+		maxHp.SetBaseValue(baseMaxHp);
 		maxHp.Clear();
 	}
 

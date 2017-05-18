@@ -1,24 +1,23 @@
 ﻿using UnityEditor;
 
-[CustomEditor(typeof(Enemy))]
-public class EnemyEditor : CharacterEditor {
+[CustomEditor(typeof(Attacker))]
+public class AttackerEditor : EditorFrame {
 
 	//editor target
-	Enemy enemy;
+	Attacker attacker;
 
 	//Attack value
 	SerializedProperty baseAtk;
 	Formula<int> atkFormula;
 
 	protected override void OnEnable() {
-		base.OnEnable();
-		enemy = target as Enemy;
-		InitializeAtk();
+		attacker = target as Attacker;
+		InitializeAtkValue();
 	}
 
-	void InitializeAtk() {
-		baseAtk = serializedObject.FindProperty("attacker.baseAtk");
-		atkFormula = enemy.Attacker.Atk;
+	void InitializeAtkValue() {
+		baseAtk = serializedObject.FindProperty("baseAtk");
+		atkFormula = attacker.Atk;
 	}
 
 	public override void OnInspectorGUI() {

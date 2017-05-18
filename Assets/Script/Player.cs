@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SkillManager))]
 public class Player : Character {
 
 	//singleton
@@ -9,12 +10,13 @@ public class Player : Character {
 	public static Player Instance { get { return instance; } }
 
 	//skill
-	SkillManager skillManager = new SkillManager();
+	SkillManager skillManager;
 	public SkillManager SkillManager { get { return skillManager; } }
 
 	new void Awake() {
 		instance = this;
 		base.Awake();
+		skillManager = GetComponent<SkillManager>();
 	}
 
 	public void RunPassive() {

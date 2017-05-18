@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator), typeof(Rigidbody2D))]
+[RequireComponent(typeof(AnimationManager))]
 public class Stone : MonoBehaviour {
 
 	//animation
-	AnimationManager animationManager = new AnimationManager();
+	AnimationManager animationManager;
 
 	void Awake() {
-		animationManager.InitializeBy(GetComponent<Animator>());
+		animationManager = GetComponent<AnimationManager>();
 	}
 
 	public void Destroy() {
-		animationManager.Animate(AnimationManager.AnimationType.DIE);
+		animationManager.Animate(AnimationType.DIE);
 	}
 }

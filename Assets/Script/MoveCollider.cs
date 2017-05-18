@@ -8,6 +8,9 @@ public class MoveCollider : MonoBehaviour {
 	//parent
 	Character parent;
 
+	//parent's CharacterMover
+	CharacterMover characterMoverOfParent;
+
 	//move collider
 	Collider2D moveCollider;
 
@@ -16,13 +19,14 @@ public class MoveCollider : MonoBehaviour {
 
 	void Awake() {
 		parent = transform.parent.GetComponent<Character>();
+		characterMoverOfParent = parent.GetComponent<CharacterMover>();
 		moveCollider = GetComponent<Collider2D>();
 	}
 
 	protected virtual void OnCollisionEnter2D(Collision2D collision) {
 		++footContactCount;
-		if (parent.CharacterMover.State == CharacterMover.MoveState.JUMP) {
-			parent.CharacterMover.SetInAir(false);
+		if (characterMoverOfParent.State == MoveState.JUMP) {
+			characterMoverOfParent.SetInAir(false);
 			parent.AnimateByMoveState();
 		}
 	}
@@ -30,7 +34,7 @@ public class MoveCollider : MonoBehaviour {
 	protected virtual void OnCollisionExit2D(Collision2D collision) {
 		--footContactCount;
 		if (footContactCount <= 0) {
-			parent.CharacterMover.SetInAir(true);
+			characterMoverOfParent.SetInAir(true);
 			parent.AnimateByMoveState();
 		}
 	}

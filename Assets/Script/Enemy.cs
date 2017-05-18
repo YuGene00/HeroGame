@@ -2,21 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Ai), typeof(Attacker))]
 public class Enemy : Character {
 
 	//AI
-	Ai ai = new Ai();
-	public Ai Ai { get { return ai; } }
+	Ai ai;
 
 	//Attacker
-	[SerializeField]
-	Attacker attacker = new Attacker();
-	public Attacker Attacker { get { return attacker; } }
+	Attacker attacker;
 
 	new void Awake() {
 		base.Awake();
-		ai.InitializeBy(this);
-		attacker.Initialize();
+		ai = GetComponent<Ai>();
+		attacker = GetComponent<Attacker>();
 	}
 
 	public new void ResetStat() {

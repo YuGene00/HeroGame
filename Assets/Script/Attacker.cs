@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class Attacker {
+public class Attacker : MonoBehaviour, IStat {
 
 	//attack value
 	[SerializeField]
@@ -11,12 +10,12 @@ public class Attacker {
 	Formula<int> atk = new Formula<int>();
 	public Formula<int> Atk { get { return atk; } }
 
-	public void Initialize() {
+	void Awake() {
 		InitializeStat();
-		atk.SetBaseValue(baseAtk);
 	}
 
 	public void InitializeStat() {
+		atk.SetBaseValue(baseAtk);
 		atk.Clear();
 	}
 }
