@@ -25,7 +25,7 @@ public class Attacker : MonoBehaviour, IStat {
 
 	void OnTriggerStay2D(Collider2D collider) {
 		if (collider.CompareTag(targetTag)) {
-			Character target = collider.GetComponent<InteractiveTrigger>().MainScript.GetComponent<Character>();
+			Character target = collider.GetComponent<InteractiveTrigger>().MainScript as Character;
 			if (target == null) {
 				return;
 			}

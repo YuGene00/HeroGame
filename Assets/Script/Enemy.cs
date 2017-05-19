@@ -8,17 +8,11 @@ public class Enemy : Character {
 	//AI
 	Ai ai;
 
-	//Attacker
-	Attacker attacker;
+	//flag for in border
+	public Direction ReachedBorder { get { return ai.ReachedBorder; } set { ai.ReachedBorder = value; } }
 
 	new void Awake() {
 		base.Awake();
 		ai = GetComponent<Ai>();
-		attacker = GetComponent<Attacker>();
-	}
-
-	public override void ResetStat() {
-		base.ResetStat();
-		attacker.InitializeStat();
 	}
 }

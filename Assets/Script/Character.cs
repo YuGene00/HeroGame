@@ -39,7 +39,7 @@ public class Character : MainScript {
 	protected void Awake() {
 		trans = transform;
 		characterMover = GetComponent<CharacterMover>();
-		moveCollider = trans.FindChild("MoveCollider").GetComponent<Collider2D>();
+		moveCollider = trans.Find("MoveCollider").GetComponent<Collider2D>();
 		halfSizeOfMoveColliderY = moveCollider.bounds.size.y * 0.5f;
 		animationManager = GetComponent<AnimationManager>();
 		hpManager = GetComponent<HpManager>();
@@ -79,7 +79,7 @@ public class Character : MainScript {
 				animationType = AnimationType.WALK;
 				break;
 			case MoveState.JUMP:
-				animationType = AnimationType.STAY;
+				animationType = AnimationType.JUMP;
 				break;
 		}
 		Animate(animationType);

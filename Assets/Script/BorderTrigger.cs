@@ -16,15 +16,15 @@ public class BorderTrigger : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D collider) {
 		if (collider.CompareTag("Enemy")) {
-			collider.GetComponent<InteractiveTrigger>().MainScript.GetComponent<Ai>().ReachedBorder = borderType;
+			(collider.GetComponent<InteractiveTrigger>().MainScript as Enemy).ReachedBorder = borderType;
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D collider) {
 		if (collider.CompareTag("Enemy")) {
-			Ai aIEnemy = collider.GetComponent<InteractiveTrigger>().MainScript.GetComponent<Ai>();
-			if (aIEnemy.ReachedBorder == borderType) {
-				aIEnemy.ReachedBorder = Direction.NONE;
+			Enemy enemy = collider.GetComponent<InteractiveTrigger>().MainScript as Enemy;
+			if (enemy.ReachedBorder == borderType) {
+				enemy.ReachedBorder = Direction.NONE;
 			}
 		}
 	}

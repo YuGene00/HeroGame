@@ -13,30 +13,34 @@ public class AnimationManager : MonoBehaviour {
 	}
 
 	public void Animate(AnimationType animationType) {
-		ResetAnimationBool();
 		switch (animationType) {
 			case AnimationType.STAY:
-				animator.SetBool("Stay", true);
+				SetBool("Stay", true);
 				break;
 			case AnimationType.WALK:
-				animator.SetBool("Walk", true);
+				SetBool("Walk", true);
 				break;
 			case AnimationType.JUMP:
-				//animator.SetBool("Jump", true);
+				SetBool("Jump", true);
 				break;
 			case AnimationType.DAMAGED:
-				//animator.SetBool("Damaged", true);
+				//SetBool("Damaged", true);
 				break;
 			case AnimationType.DIE:
-				//animator.SetBool("Die", true);
+				//SetBool("Die", true);
 				break;
 		}
+	}
+
+	void SetBool(string name, bool value) {
+		ResetAnimationBool();
+		animator.SetBool(name, value);
 	}
 
 	void ResetAnimationBool() {
 		animator.SetBool("Stay", false);
 		animator.SetBool("Walk", false);
-		//animator.SetBool("Jump", false);
+		animator.SetBool("Jump", false);
 		//animator.SetBool("Damaged", false);
 		//animator.SetBool("Die", false);
 	}
