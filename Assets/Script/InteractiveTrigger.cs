@@ -5,7 +5,10 @@ using UnityEngine;
 public class InteractiveTrigger : MonoBehaviour {
 
 	//parent's main script
-	[SerializeField]
-	MainScript mainScript = null;
+	MainScript mainScript;
 	public MainScript MainScript { get { return mainScript; } }
+
+	void Awake() {
+		mainScript = transform.parent.GetComponent<MainScript>();
+	}
 }

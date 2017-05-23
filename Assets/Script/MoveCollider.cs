@@ -11,16 +11,12 @@ public class MoveCollider : MonoBehaviour {
 	//parent's CharacterMover
 	CharacterMover characterMoverOfParent;
 
-	//move collider
-	Collider2D moveCollider;
-
 	//count for foot contact
 	int footContactCount = 0;
 
 	void Awake() {
 		parent = transform.parent.GetComponent<Character>();
 		characterMoverOfParent = parent.GetComponent<CharacterMover>();
-		moveCollider = GetComponent<Collider2D>();
 	}
 
 	protected virtual void OnCollisionEnter2D(Collision2D collision) {
