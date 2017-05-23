@@ -6,16 +6,20 @@ public class Attacker : MonoBehaviour, IStat {
 
 	//attack value
 	[SerializeField]
-	int baseAtk;
+	int baseAtk = 0;
 	Formula<int> atk = new Formula<int>();
 	public Formula<int> Atk { get { return atk; } }
 
 	//attack target Tag
 	[SerializeField]
-	string targetTag;
+	string targetTag = null;
+
+	//Transform for DamageData
+	Transform trans;
 
 	void Awake() {
 		InitializeStat();
+		trans = transform;
 	}
 
 	public void InitializeStat() {
@@ -29,7 +33,7 @@ public class Attacker : MonoBehaviour, IStat {
 			if (target == null) {
 				return;
 			}
-			target.Damaged(Atk.Value);
+			target.Damaged(new DamageData(atk.Value, trans));
 		}
 	}
 }

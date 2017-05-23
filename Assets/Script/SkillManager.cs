@@ -16,11 +16,11 @@ public class SkillManager : MonoBehaviour {
 
 	//skill
 	[SerializeField]
-	Skill[] passiveSkills;
+	Skill[] passiveSkills = null;
 	[SerializeField]
-	Skill uniqueSkill;
+	Skill uniqueSkill = null;
 	[SerializeField]
-	Skill ultimateSkill;
+	Skill ultimateSkill = null;
 
 	public void RunPassive() {
 		RunSkill(passiveSkills);

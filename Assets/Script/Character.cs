@@ -9,7 +9,7 @@ public class Character : MainScript {
 	Transform trans;
 
 	//CharacterMover
-	CharacterMover characterMover;
+	protected CharacterMover characterMover;
 
 	//Collider2D for MoveCollider
 	Collider2D moveCollider;
@@ -32,6 +32,7 @@ public class Character : MainScript {
 
 	//AnimationManager
 	AnimationManager animationManager;
+	public AnimationType AnimationState { get { return animationManager.AnimationState; } }
 
 	//HPManager
 	HpManager hpManager;
@@ -94,7 +95,7 @@ public class Character : MainScript {
 		AnimateByMoveState();
 	}
 
-	public void Animate(AnimationType animation) {
+	public virtual void Animate(AnimationType animation) {
 		animationManager.Animate(animation);
 	}
 
@@ -103,9 +104,9 @@ public class Character : MainScript {
 		hpManager.InitializeStat();
 	}
 
-	public virtual void Damaged(int value) {
+	public virtual void Damaged(DamageData damageData) {
 		animationManager.Animate(AnimationType.DAMAGED);
-		hpManager.Damaged(value);
+		hpManager.Damaged(damageData.value);
 		if (hpManager.CurrentHp <= 0) {
 			animationManager.Animate(AnimationType.DIE);
 			DeadAction();

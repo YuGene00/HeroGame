@@ -6,6 +6,6 @@ public class InteractiveTrigger : MonoBehaviour {
 
 	//parent's main script
 	[SerializeField]
-	MainScript mainScript;
+	MainScript mainScript = null;
 	public MainScript MainScript { get { return mainScript; } }
 }

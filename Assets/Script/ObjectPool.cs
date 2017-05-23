@@ -73,11 +73,21 @@ public class ObjectPool {
 	}
 
 	public static void Release(GameObject gameObj) {
-		gameObj.GetComponent<Releaser>().Release();
+		Releaser releaser = gameObj.GetComponent<Releaser>();
+		if (releaser) {
+			releaser.Release();
+		} else {
+			MonoBehaviour.Destroy(gameObj);
+		}
 	}
 
 	public static void Release(GameObject gameObj, float time) {
-		gameObj.GetComponent<Releaser>().Release(time);
+		Releaser releaser = gameObj.GetComponent<Releaser>();
+		if (releaser) {
+			releaser.Release(time);
+		} else {
+			MonoBehaviour.Destroy(gameObj, time);
+		}
 	}
 
 	public void ReturnToPool(GameObject gameObj) {

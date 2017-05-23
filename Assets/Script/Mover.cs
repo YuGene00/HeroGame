@@ -10,7 +10,7 @@ public class Mover : MonoBehaviour, IStat {
 
 	//move speed
 	[SerializeField]
-	float baseSpeed;
+	float baseSpeed = 0f;
 	Formula<float> speed = new Formula<float>();
 	public Formula<float> Speed { get { return speed; } }
 
@@ -25,7 +25,6 @@ public class Mover : MonoBehaviour, IStat {
 	}
 
 	public void MoveTo(Vector2 direction) {
-		//trans.Translate(direction * speed.Value * Time.deltaTime);
 		rigid.velocity = direction * speed.Value;
 	}
 }

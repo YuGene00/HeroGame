@@ -10,7 +10,7 @@ public class CharacterMover : Mover {
 
 	//jump power
 	[SerializeField]
-	float baseJumpPower;
+	float baseJumpPower = 0f;
 	Formula<float> jumpPower = new Formula<float>();
 	public Formula<float> JumpPower { get { return jumpPower; } }
 	[SerializeField]
@@ -19,10 +19,14 @@ public class CharacterMover : Mover {
 	//variable for calculating jump vector
 	Formula<float> jumpVectorX = new Formula<float>();
 
+	//flag for ban move control
+	public bool IsMoveControlBanned { get; set; }
+
 	new void Awake() {
 		base.Awake();
 		InitializeStat();
 		InitializeConstantForJumpVector();
+		IsMoveControlBanned = false;
 	}
 
 	public new void InitializeStat() {
@@ -40,13 +44,13 @@ public class CharacterMover : Mover {
 		if (inAir) {
 			state = MoveState.JUMP;
 		} else {
-			rigid.velocity = Vector2.zero;
 			state = MoveState.STAY;
+			rigid.velocity = Vector2.zero;
 		}
 	}
 
 	public void WalkTo(Direction direction) {
-		if (state == MoveState.JUMP) {
+		if (IsMoveControlBanned || state == MoveState.JUMP) {
 			return;
 		}
 
@@ -64,9 +68,10 @@ public class CharacterMover : Mover {
 	}
 
 	public void JumpTo(Direction direction) {
-		if (state == MoveState.JUMP) {
+		if (IsMoveControlBanned || state == MoveState.JUMP) {
 			return;
 		}
+
 		rigid.velocity = GetJumpVectorBy(direction);
 	}
 
@@ -82,9 +87,11 @@ public class CharacterMover : Mover {
 	}
 
 	public void Stop() {
-		if (state == MoveState.WALK) {
-			state = MoveState.STAY;
-			rigid.velocity = Vector2.zero;
+		if (IsMoveControlBanned || state != MoveState.WALK) {
+			return;
 		}
+
+		state = MoveState.STAY;
+		rigid.velocity = Vector2.zero;
 	}
 }

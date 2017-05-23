@@ -23,7 +23,7 @@ public class Ai : MonoBehaviour {
 		InitializeAction();
 		Play = true;
 		playWait = new WaitUntil(() => Play);
-		CoroutineDelegate.Instance.StartCoroutine(RunAi());
+		StartCoroutine("RunAi");
 	}
 
 	void InitializeAction() {

@@ -7,12 +7,15 @@ public class AnimationManager : MonoBehaviour {
 
 	//Animator
 	Animator animator;
+	public AnimationType AnimationState { get; set; }
 
 	void Awake() {
 		animator = GetComponent<Animator>();
+		AnimationState = AnimationType.STAY;
 	}
 
 	public void Animate(AnimationType animationType) {
+		AnimationState = animationType;
 		switch (animationType) {
 			case AnimationType.STAY:
 				SetBool("Stay", true);
@@ -24,10 +27,10 @@ public class AnimationManager : MonoBehaviour {
 				SetBool("Jump", true);
 				break;
 			case AnimationType.DAMAGED:
-				//SetBool("Damaged", true);
+				SetBool("Damaged", true);
 				break;
 			case AnimationType.DIE:
-				//SetBool("Die", true);
+				SetBool("Die", true);
 				break;
 		}
 	}
@@ -41,7 +44,7 @@ public class AnimationManager : MonoBehaviour {
 		animator.SetBool("Stay", false);
 		animator.SetBool("Walk", false);
 		animator.SetBool("Jump", false);
-		//animator.SetBool("Damaged", false);
-		//animator.SetBool("Die", false);
+		animator.SetBool("Damaged", false);
+		animator.SetBool("Die", false);
 	}
 }

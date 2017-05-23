@@ -15,8 +15,14 @@ public class Player : Character {
 
 	//immortal
 	bool isImmortal = false;
-	const float immortalTime = 1f;
+	const float immortalTime = 2.5f;
 	WaitForSeconds immortalTimeWait = new WaitForSeconds(immortalTime);
+
+	//KnockBack
+	[SerializeField]
+	Vector2 knockBackPower = Vector2.zero;
+	const float knockBackTime = 0.2f;
+	WaitForSeconds knockBackTimeWait = new WaitForSeconds(knockBackTime);
 
 	new void Awake() {
 		instance = this;
@@ -33,14 +39,39 @@ public class Player : Character {
 		skillManager.RunUnique();
 	}
 
-	public override void Damaged(int value) {
+	public override void Animate(AnimationType animation) {
+		if (characterMover.IsMoveControlBanned) {
+			return;
+		}
+
+		base.Animate(animation);
+	}
+
+	public override void Damaged(DamageData damageData) {
 		if (isImmortal) {
 			return;
 		}
+
 		//EventManager.Instance.Result.IncreaseHitCount();
-		base.Damaged(value);
-		CoroutineDelegate.Instance.StartCoroutine(RunImmortal());
+		KnockBack(damageData.attacker);
+		base.Damaged(damageData);
+		StartCoroutine("RunImmortal");
 		Debug.Log("Ouch!");
+	}
+
+	void KnockBack(Transform attacker) {
+		Vector2 knockBackDirection = knockBackPower;
+		if (Position.x < attacker.position.x) {
+			knockBackDirection.x = -knockBackDirection.x;
+		}
+		StartCoroutine("RunMoveBanForDamaged");
+		characterMover.MoveTo(knockBackDirection);
+	}
+
+	IEnumerator RunMoveBanForDamaged() {
+		characterMover.IsMoveControlBanned = true;
+		yield return knockBackTimeWait;
+		characterMover.IsMoveControlBanned = false;
 	}
 
 	IEnumerator RunImmortal() {

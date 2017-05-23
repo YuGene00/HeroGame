@@ -32,7 +32,7 @@ public class RunStage : IEvent {
 public class RemainTime : IEvent {
 
 	//remain time
-	float time;
+	float time = 0f;
 	public float Time { get { return time; } }
 
 	public void Run() {

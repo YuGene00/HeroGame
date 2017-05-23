@@ -6,7 +6,7 @@ public class HpManager : MonoBehaviour, IStat {
 
 	//max HP
 	[SerializeField]
-	int baseMaxHp;
+	int baseMaxHp = 0;
 	Formula<int> maxHp = new Formula<int>();
 	public Formula<int> MaxHp { get { return maxHp; } }
 

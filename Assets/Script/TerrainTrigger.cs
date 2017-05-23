@@ -7,13 +7,10 @@ public class TerrainTrigger : MonoBehaviour {
 
 	//terrain collider
 	[SerializeField]
-	Collider2D terrainCollider;
+	Collider2D terrainCollider = null;
 
 	//half size of terrain collider
 	Vector2 halfTerrainColliderSize;
-
-	//save velocity value
-	static Vector2 originalVelocity;
 
 	void Awake() {
 		halfTerrainColliderSize = terrainCollider.bounds.size * 0.5f;

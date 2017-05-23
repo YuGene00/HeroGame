@@ -1,4 +1,4 @@
-﻿//enum for move direction
+﻿//move direction
 public enum Direction {
 	NONE, LEFT, RIGHT
 }
@@ -8,6 +8,7 @@ public enum MoveState {
 	STAY, WALK, JUMP
 }
 
+//animation type
 public enum AnimationType {
-	STAY, WALK, JUMP, DAMAGED, DIE
+	NONE, STAY, WALK, JUMP, DAMAGED, DIE
 }
