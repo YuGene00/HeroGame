@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(SkillManager))]
+[RequireComponent(typeof(SkillManager), typeof(SpriteRenderer))]
 public class Player : Character {
 
 	//singleton
@@ -15,19 +15,33 @@ public class Player : Character {
 
 	//immortal
 	bool isImmortal = false;
-	const float immortalTime = 2.5f;
-	WaitForSeconds immortalTimeWait = new WaitForSeconds(immortalTime);
+	[SerializeField]
+	float immortalTime = 0f;
+	const float unitImmortalTime = 0.1f;
+	WaitForSeconds unitImmortalTimeWait = new WaitForSeconds(unitImmortalTime);
+	int repeatImmortalUnitCount;
+	[SerializeField]
+	float immortalBlankTime = 0f;
+	int repeatBlankUnitCount;
+
+	//damaged blank
+	SpriteRenderer spriteRenderer;
+	[SerializeField]
+	Color blankColor;
 
 	//KnockBack
 	[SerializeField]
 	Vector2 knockBackPower = Vector2.zero;
-	const float knockBackTime = 0.2f;
+	const float knockBackTime = 0.25f;
 	WaitForSeconds knockBackTimeWait = new WaitForSeconds(knockBackTime);
 
 	new void Awake() {
 		instance = this;
 		base.Awake();
 		skillManager = GetComponent<SkillManager>();
+		repeatImmortalUnitCount = (int)(immortalTime / unitImmortalTime);
+		repeatBlankUnitCount = (int)(immortalBlankTime / unitImmortalTime);
+		spriteRenderer = GetComponent<SpriteRenderer>();
 	}
 
 	public void RunPassive() {
@@ -75,8 +89,23 @@ public class Player : Character {
 	}
 
 	IEnumerator RunImmortal() {
+		Color originColor = spriteRenderer.color;
+		int blankCount = repeatBlankUnitCount;
 		isImmortal = true;
-		yield return immortalTimeWait;
+		for (int immortalCount = 0; immortalCount < repeatImmortalUnitCount; ++immortalCount) {
+			if (repeatBlankUnitCount <= blankCount) {
+				if (spriteRenderer.color != originColor) {
+					spriteRenderer.color = originColor;
+				} else {
+					spriteRenderer.color = blankColor;
+				}
+				blankCount = 0;
+			} else {
+				++blankCount;
+			}
+			yield return unitImmortalTimeWait;
+		}
+		spriteRenderer.color = originColor;
 		isImmortal = false;
 	}
 
