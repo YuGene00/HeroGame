@@ -18,6 +18,7 @@ public class MoverEditor : EditorFrame {
 	void InitializeMoverValue() {
 		baseSpeed = serializedObject.FindProperty("baseSpeed");
 		speedFormula = mover.Speed;
+		speedFormula.SetBaseValue(baseSpeed.floatValue);
 	}
 
 	public override void OnInspectorGUI() {

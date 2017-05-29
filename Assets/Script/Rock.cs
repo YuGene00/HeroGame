@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AnimationManager))]
-public class Stone : MonoBehaviour {
+public class Rock : MonoBehaviour {
 
 	//animation
 	AnimationManager animationManager;

@@ -20,6 +20,7 @@ public class CharacterMoverEditor : MoverEditor {
 	void InitializeCharacterMoverValue() {
 		baseJumpPower = serializedObject.FindProperty("baseJumpPower");
 		jumpFormula = characterMover.JumpPower;
+		jumpFormula.SetBaseValue(baseJumpPower.floatValue);
 		speedInfluenceRatioToJump = serializedObject.FindProperty("speedInfluenceRatioToJump");
 	}
 

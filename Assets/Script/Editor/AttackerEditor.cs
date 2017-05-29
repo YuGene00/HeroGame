@@ -21,6 +21,7 @@ public class AttackerEditor : EditorFrame {
 	void InitializeAtkValue() {
 		baseAtk = serializedObject.FindProperty("baseAtk");
 		atkFormula = attacker.Atk;
+		atkFormula.SetBaseValue(baseAtk.intValue);
 		targetTag = serializedObject.FindProperty("targetTag");
 	}
 

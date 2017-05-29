@@ -27,12 +27,12 @@ public class Player : Character {
 	//damaged blank
 	SpriteRenderer spriteRenderer;
 	[SerializeField]
-	Color blankColor;
+	Color blankColor = new Color(1f, 1f, 1f, 0.5f);
 
 	//KnockBack
 	[SerializeField]
 	Vector2 knockBackPower = Vector2.zero;
-	const float knockBackTime = 0.25f;
+	const float knockBackTime = 0.5f;
 	WaitForSeconds knockBackTimeWait = new WaitForSeconds(knockBackTime);
 
 	new void Awake() {
@@ -70,7 +70,6 @@ public class Player : Character {
 		KnockBack(damageData.attacker);
 		base.Damaged(damageData);
 		StartCoroutine("RunImmortal");
-		Debug.Log("Ouch!");
 	}
 
 	void KnockBack(Transform attacker) {

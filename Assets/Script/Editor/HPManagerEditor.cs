@@ -18,6 +18,7 @@ public class HpManagerEditor : EditorFrame {
 	void InitializeHpValue() {
 		baseMaxHp = serializedObject.FindProperty("baseMaxHp");
 		maxHpFormula = hpManager.MaxHp;
+		maxHpFormula.SetBaseValue(baseMaxHp.intValue);
 	}
 
 	public override void OnInspectorGUI() {

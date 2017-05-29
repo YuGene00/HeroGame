@@ -19,6 +19,11 @@ public class Ai : MonoBehaviour {
 	public bool Play { get; set; }
 	WaitUntil playWait;
 
+	//flag for remained agro
+	bool isRunningRemainedAgro = false;
+	const float remainedTime = 2f;
+	WaitForSeconds remainedWait = new WaitForSeconds(remainedTime);
+
 	void Awake() {
 		InitializeAction();
 		Play = true;
@@ -42,10 +47,22 @@ public class Ai : MonoBehaviour {
 
 	public void SetAgro(bool isAgro) {
 		if (isAgro) {
+			StopCoroutine("RunRemainedAgro");
 			action = playerTracer;
 		} else {
-			action = wonderer;
+			StartCoroutine("RunRemainedAgro");
 		}
+	}
+
+	IEnumerator RunRemainedAgro() {
+		if (isRunningRemainedAgro) {
+			yield break;
+		}
+
+		isRunningRemainedAgro = true;
+		yield return remainedWait;
+		isRunningRemainedAgro = false;
+		action = wonderer;
 	}
 }
 
@@ -66,6 +83,14 @@ public class Wonderer : IAiAction {
 	//flag for in border
 	public Direction ReachedBorder { get; set; }
 
+	//flag for activated
+	bool isActivated = true;
+	bool isRunningWait = false;
+	const float activeTime = 3f;
+	const float inactiveTime = 1f;
+	WaitForSeconds activeWait = new WaitForSeconds(activeTime);
+	WaitForSeconds inactiveWait = new WaitForSeconds(inactiveTime);
+
 	public static Wonderer CreateFor(Enemy enemy) {
 		return new Wonderer(enemy);
 	}
@@ -75,6 +100,16 @@ public class Wonderer : IAiAction {
 	}
 
 	public override void Action() {
+		if (isActivated) {
+			Wonder();
+			CoroutineDelegate.Instance.StartCoroutine(RunInactivateAfterWait());
+		} else {
+			enemy.Stop();
+			CoroutineDelegate.Instance.StartCoroutine(RunActivateAfterWait());
+		}
+	}
+
+	void Wonder() {
 		Direction direction = enemy.Direction;
 		if (direction == ReachedBorder) {
 			direction = GetReverseDirection(ReachedBorder);
@@ -89,6 +124,28 @@ public class Wonderer : IAiAction {
 			default:
 				return Direction.LEFT;
 		}
+	}
+
+	IEnumerator RunInactivateAfterWait() {
+		if (isRunningWait) {
+			yield break;
+		}
+
+		isRunningWait = true;
+		yield return activeWait;
+		isActivated = false;
+		isRunningWait = false;
+	}
+
+	IEnumerator RunActivateAfterWait() {
+		if (isRunningWait) {
+			yield break;
+		}
+
+		isRunningWait = true;
+		yield return inactiveWait;
+		isActivated = true;
+		isRunningWait = false;
 	}
 }
 
