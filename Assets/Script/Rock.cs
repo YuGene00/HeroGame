@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(AnimationManager))]
+[RequireComponent(typeof(AnimationController))]
 public class Rock : MonoBehaviour {
 
-	//animation
-	AnimationManager animationManager;
+	//animationController
+	AnimationController animationController;
 
 	void Awake() {
-		animationManager = GetComponent<AnimationManager>();
+		animationController = GetComponent<AnimationController>();
 	}
 
 	public void Destroy() {
-		animationManager.Animate(AnimationType.DIE);
+		animationController.Animate(AnimationType.DIE);
 	}
 }

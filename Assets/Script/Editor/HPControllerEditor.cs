@@ -1,23 +1,23 @@
 ﻿using UnityEditor;
 
-[CustomEditor(typeof(HpManager))]
-public class HpManagerEditor : EditorFrame {
+[CustomEditor(typeof(HpController))]
+public class HpControllerEditor : EditorFrame {
 
 	//editor target
-	HpManager hpManager;
+	HpController hpController;
 
 	//HP value
 	SerializedProperty baseMaxHp;
 	Formula<int> maxHpFormula;
 
 	protected override void OnEnable() {
-		hpManager = target as HpManager;
+		hpController = target as HpController;
 		InitializeHpValue();
 	}
 
 	void InitializeHpValue() {
 		baseMaxHp = serializedObject.FindProperty("baseMaxHp");
-		maxHpFormula = hpManager.MaxHp;
+		maxHpFormula = hpController.MaxHp;
 		maxHpFormula.SetBaseValue(baseMaxHp.intValue);
 	}
 

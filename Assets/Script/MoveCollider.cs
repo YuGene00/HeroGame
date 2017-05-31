@@ -23,6 +23,7 @@ public class MoveCollider : MonoBehaviour {
 		++footContactCount;
 		if (characterMoverOfParent.State == MoveState.JUMP) {
 			characterMoverOfParent.SetInAir(false);
+			EffectManager.Instance.PlayEffect(new EffectData(EffectType.LAND, parent.Position, parent.Direction));
 			parent.AnimateByMoveState();
 		}
 	}

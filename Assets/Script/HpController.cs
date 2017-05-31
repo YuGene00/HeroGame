@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HpManager : MonoBehaviour, IStat {
+public class HpController : MonoBehaviour, IStat {
 
 	//max HP
 	[SerializeField]

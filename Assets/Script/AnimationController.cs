@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class AnimationManager : MonoBehaviour {
+public class AnimationController : MonoBehaviour {
 
 	//Animator
 	Animator animator;
@@ -15,7 +15,6 @@ public class AnimationManager : MonoBehaviour {
 	}
 
 	public void Animate(AnimationType animationType) {
-		AnimationState = animationType;
 		switch (animationType) {
 			case AnimationType.STAY:
 				SetBool("Stay", true);
@@ -33,6 +32,7 @@ public class AnimationManager : MonoBehaviour {
 				SetBool("Die", true);
 				break;
 		}
+		AnimationState = animationType;
 	}
 
 	void SetBool(string name, bool value) {

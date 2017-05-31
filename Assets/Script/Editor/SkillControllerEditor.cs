@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(SkillManager))]
-public class SkillManagerEditor : EditorFrame {
+[CustomEditor(typeof(SkillController))]
+public class SkillControllerEditor : EditorFrame {
 
 	//editor target
-	SkillManager skillManager;
+	SkillController skillController;
 
 	//skill value
 	int passiveLevel;
 
 	protected override void OnEnable() {
-		skillManager = target as SkillManager;
+		skillController = target as SkillController;
 	}
 
 	public override void OnInspectorGUI() {
@@ -23,12 +23,12 @@ public class SkillManagerEditor : EditorFrame {
 		EditorGUILayout.LabelField("스킬");
 		++EditorGUI.indentLevel;
 		EditorGUI.BeginDisabledGroup(!Application.isPlaying);
-		passiveLevel = EditorGUILayout.IntSlider("패시브 레벨", skillManager.PassiveLevel, 0, 10);
+		passiveLevel = EditorGUILayout.IntSlider("패시브 레벨", skillController.PassiveLevel, 0, 10);
 		EditorGUI.EndDisabledGroup();
 		--EditorGUI.indentLevel;
 	}
 
 	void AfterChangeSkill() {
-		skillManager.PassiveLevel = passiveLevel;
+		skillController.PassiveLevel = passiveLevel;
 	}
 }

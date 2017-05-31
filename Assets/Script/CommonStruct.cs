@@ -13,3 +13,17 @@ public struct DamageData {
 		this.attacker = attacker;
 	}
 }
+
+//effect data
+public struct EffectData {
+
+	public EffectType effectType;
+	public Vector2 position;
+	public Direction direction;
+
+	public EffectData(EffectType effectType, Vector2 position = default(Vector2), Direction direction = Direction.NONE) {
+		this.effectType = effectType;
+		this.position = position;
+		this.direction = direction;
+	}
+}

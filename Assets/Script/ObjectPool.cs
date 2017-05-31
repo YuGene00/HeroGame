@@ -4,11 +4,14 @@ using System.Collections.Generic;
 
 public class ObjectPool {
 
+	class ParentMonobehavior : MonoBehaviour { }
+
 	//original GameObject
 	GameObject origin;
+	public GameObject Origin { get { return origin; } }
 
 	//data structure
-	int unitCount;
+	int extendCount;
 	Stack<GameObject> poolStack = new Stack<GameObject>();
 
 	//parent for GameObject from ObjectPool
@@ -18,23 +21,23 @@ public class ObjectPool {
 		public Transform trans;
 	}
 
-	public static ObjectPool CreateFor(GameObject gameObj, int unitCount = 20) {
+	public static ObjectPool CreateFor(GameObject gameObj, int initializeCount = 20, int extendCount = 10) {
 		ObjectPool objPool = new ObjectPool();
 		objPool.origin = gameObj;
-		objPool.unitCount = unitCount;
+		objPool.extendCount = extendCount;
 		objPool.InitializeParent();
-		objPool.AllocateMemory();
+		objPool.AllocateMemoryTo(initializeCount);
 		return objPool;
 	}
 
 	void InitializeParent() {
 		GameObject parentObj = new GameObject(origin.name);
-		parent.mono = parentObj.GetComponent<MonoBehaviour>();
+		parent.mono = parentObj.AddComponent<ParentMonobehavior>();
 		parent.trans = parentObj.transform;
 	}
 
-	void AllocateMemory() {
-		for (int i = 0; i < unitCount; ++i) {
+	void AllocateMemoryTo(int allocateCount) {
+		for (int i = 0; i < allocateCount; ++i) {
 			PushNewObject();
 		}
 	}
@@ -53,22 +56,22 @@ public class ObjectPool {
 	}
 
 	public GameObject Retain(Vector3 position = default(Vector3), Quaternion? rotation = null) {
-		if (rotation == null) {
-			rotation = Quaternion.identity;
+		if (poolStack.Count <= 0) {
+			AllocateMemoryTo(extendCount);
 		}
-		GameObject gameObj = RetainObjectTo(position, rotation.Value);
+		GameObject gameObj = poolStack.Pop();
+		SetObjectPositionAt(gameObj, position, rotation);
 		gameObj.SetActive(true);
 		return gameObj;
 	}
 
-	GameObject RetainObjectTo(Vector3 position, Quaternion rotation) {
-		if (poolStack.Count <= 0) {
-			AllocateMemory();
+	GameObject SetObjectPositionAt(GameObject gameObj, Vector3 position, Quaternion? rotation) {
+		if (rotation == null) {
+			rotation = Quaternion.identity;
 		}
-		GameObject gameObj = poolStack.Pop();
 		Transform trans = gameObj.transform;
 		trans.position = position;
-		trans.rotation = rotation;
+		trans.rotation = rotation.Value;
 		return gameObj;
 	}
 
@@ -91,6 +94,10 @@ public class ObjectPool {
 	}
 
 	public void ReturnToPool(GameObject gameObj) {
+		Transform trans = gameObj.transform;
+		if (trans.parent != parent.trans) {
+			trans.SetParent(parent.trans);
+		}
 		gameObj.SetActive(false);
 		poolStack.Push(gameObj);
 	}
@@ -104,7 +111,7 @@ public class ObjectPool {
 		ReturnToPool(gameObj);
 	}
 
-	public class Releaser : MonoBehaviour {
+	class Releaser : MonoBehaviour {
 
 		//gameObject which has this releaser
 		GameObject gameObj;

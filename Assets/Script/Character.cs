@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterMover), typeof(AnimationManager), typeof(HpManager))]
+[RequireComponent(typeof(CharacterMover), typeof(AnimationController), typeof(HpController))]
 public class Character : MainScript {
 
 	//Transform
@@ -30,29 +30,37 @@ public class Character : MainScript {
 		}
 	}
 
-	//AnimationManager
-	AnimationManager animationManager;
-	public AnimationType AnimationState { get { return animationManager.AnimationState; } }
+	//AnimationController
+	AnimationController animationController;
+	public AnimationType AnimationState { get { return animationController.AnimationState; } }
 
-	//HPManager
-	HpManager hpManager;
+	//HPController
+	protected HpController hpController;
+
+	//immortal
+	protected bool isImmortal = false;
 
 	protected void Awake() {
 		trans = transform;
 		characterMover = GetComponent<CharacterMover>();
 		moveCollider = trans.Find("MoveCollider").GetComponent<Collider2D>();
 		halfSizeOfMoveColliderY = moveCollider.bounds.size.y * 0.5f;
-		animationManager = GetComponent<AnimationManager>();
-		hpManager = GetComponent<HpManager>();
+		animationController = GetComponent<AnimationController>();
+		hpController = GetComponent<HpController>();
+	}
+
+	void OnEnable() {
+		hpController.Recovery(hpController.MaxHp.Value);
+		isImmortal = false;
 	}
 
 	public void WalkTo(Direction direction) {
-		SetRotation(direction);
+		SetDirection(direction);
 		characterMover.WalkTo(direction);
 		AnimateByMoveState();
 	}
 
-	void SetRotation(Direction direction) {
+	void SetDirection(Direction direction) {
 		if (Direction == direction) {
 			return;
 		}
@@ -61,13 +69,12 @@ public class Character : MainScript {
 		switch (direction) {
 			case Direction.LEFT:
 				scale.x = Mathf.Abs(scale.x);
-				trans.localScale = scale;
 				break;
 			case Direction.RIGHT:
 				scale.x = -Mathf.Abs(scale.x);
-				trans.localScale = scale;
 				break;
 		}
+		trans.localScale = scale;
 	}
 
 	public void AnimateByMoveState() {
@@ -77,6 +84,7 @@ public class Character : MainScript {
 				animationType = AnimationType.STAY;
 				break;
 			case MoveState.WALK:
+				PlayEffectIfFirstWalk();
 				animationType = AnimationType.WALK;
 				break;
 			case MoveState.JUMP:
@@ -86,8 +94,23 @@ public class Character : MainScript {
 		Animate(animationType);
 	}
 
+	void PlayEffectIfFirstWalk() {
+		if (animationController.AnimationState != AnimationType.STAY) {
+			return;
+		}
+
+		EffectManager.Instance.PlayEffect(new EffectData(EffectType.WALK, Position, Direction));
+	}
+
 	public void Jump() {
+		if (animationController.AnimationState == AnimationType.JUMP) {
+			return;
+		}
+
+		EffectManager.Instance.PlayEffect(new EffectData(EffectType.JUMP, Position, Direction));
 		characterMover.JumpTo(Direction);
+		characterMover.SetInAir(true);
+		AnimateByMoveState();
 	}
 
 	public void Stop() {
@@ -96,19 +119,24 @@ public class Character : MainScript {
 	}
 
 	public virtual void Animate(AnimationType animation) {
-		animationManager.Animate(animation);
+		animationController.Animate(animation);
 	}
 
 	public virtual void ResetStat() {
 		characterMover.InitializeStat();
-		hpManager.InitializeStat();
+		hpController.InitializeStat();
 	}
 
 	public virtual void Damaged(DamageData damageData) {
-		animationManager.Animate(AnimationType.DAMAGED);
-		hpManager.Damaged(damageData.value);
-		if (hpManager.CurrentHp <= 0) {
-			animationManager.Animate(AnimationType.DIE);
+		if (isImmortal) {
+			return;
+		}
+
+		animationController.Animate(AnimationType.DAMAGED);
+		hpController.Damaged(damageData.value);
+		if (hpController.CurrentHp <= 0) {
+			isImmortal = true;
+			animationController.Animate(AnimationType.DIE);
 			DeadAction();
 		}
 	}
@@ -116,6 +144,6 @@ public class Character : MainScript {
 	protected virtual void DeadAction() { }
 
 	public void Recovery(int value) {
-		hpManager.Recovery(value);
+		hpController.Recovery(value);
 	}
 }

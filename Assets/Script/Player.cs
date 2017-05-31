@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(SkillManager), typeof(SpriteRenderer))]
+[RequireComponent(typeof(SkillController), typeof(SpriteRenderer))]
 public class Player : Character {
 
 	//singleton
@@ -10,11 +10,10 @@ public class Player : Character {
 	public static Player Instance { get { return instance; } }
 
 	//skill
-	SkillManager skillManager;
-	public SkillManager SkillManager { get { return skillManager; } }
+	SkillController skillController;
+	public SkillController SkillController { get { return skillController; } }
 
 	//immortal
-	bool isImmortal = false;
 	[SerializeField]
 	float immortalTime = 0f;
 	const float unitImmortalTime = 0.1f;
@@ -38,7 +37,7 @@ public class Player : Character {
 	new void Awake() {
 		instance = this;
 		base.Awake();
-		skillManager = GetComponent<SkillManager>();
+		skillController = GetComponent<SkillController>();
 		repeatImmortalUnitCount = (int)(immortalTime / unitImmortalTime);
 		repeatBlankUnitCount = (int)(immortalBlankTime / unitImmortalTime);
 		spriteRenderer = GetComponent<SpriteRenderer>();
@@ -46,11 +45,11 @@ public class Player : Character {
 
 	public void RunPassive() {
 		ResetStat();
-		skillManager.RunPassive();
+		skillController.RunPassive();
 	}
 
 	public void RunUnique() {
-		skillManager.RunUnique();
+		skillController.RunUnique();
 	}
 
 	public override void Animate(AnimationType animation) {
@@ -67,9 +66,11 @@ public class Player : Character {
 		}
 
 		//EventManager.Instance.Result.IncreaseHitCount();
-		KnockBack(damageData.attacker);
 		base.Damaged(damageData);
-		StartCoroutine("RunImmortal");
+		if (hpController.CurrentHp > 0) {
+			KnockBack(damageData.attacker);
+			StartCoroutine("RunImmortal");
+		}
 	}
 
 	void KnockBack(Transform attacker) {
@@ -85,6 +86,7 @@ public class Player : Character {
 		characterMover.IsMoveControlBanned = true;
 		yield return knockBackTimeWait;
 		characterMover.IsMoveControlBanned = false;
+		AnimateByMoveState();
 	}
 
 	IEnumerator RunImmortal() {
@@ -109,6 +111,7 @@ public class Player : Character {
 	}
 
 	protected override void DeadAction() {
+		isImmortal = true;
 		EventManager.Instance.PlayerDie.Run();
 	}
 }
