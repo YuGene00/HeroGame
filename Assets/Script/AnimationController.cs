@@ -7,11 +7,16 @@ public class AnimationController : MonoBehaviour {
 
 	//Animator
 	Animator animator;
-	public AnimationType AnimationState { get; set; }
+	AnimatorStateInfo animatorStateInfo;
+
+	//current animation
+	public AnimationType State { get; set; }
+	public float Progress { get { return animatorStateInfo.normalizedTime; } }
 
 	void Awake() {
 		animator = GetComponent<Animator>();
-		AnimationState = AnimationType.STAY;
+		animatorStateInfo = animator.GetCurrentAnimatorStateInfo(0);
+		State = AnimationType.STAY;
 	}
 
 	public void Animate(AnimationType animationType) {
@@ -32,7 +37,7 @@ public class AnimationController : MonoBehaviour {
 				SetBool("Die", true);
 				break;
 		}
-		AnimationState = animationType;
+		State = animationType;
 	}
 
 	void SetBool(string name, bool value) {

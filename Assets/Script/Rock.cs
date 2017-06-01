@@ -8,8 +8,12 @@ public class Rock : MonoBehaviour {
 	//animationController
 	AnimationController animationController;
 
+	//wait for die
+	WaitUntil dieWait;
+
 	void Awake() {
 		animationController = GetComponent<AnimationController>();
+		dieWait = new WaitUntil(() => animationController.Progress >= 1f);
 	}
 
 	public void Destroy() {

@@ -32,7 +32,7 @@ public class Character : MainScript {
 
 	//AnimationController
 	AnimationController animationController;
-	public AnimationType AnimationState { get { return animationController.AnimationState; } }
+	public AnimationType AnimationState { get { return animationController.State; } }
 
 	//HPController
 	protected HpController hpController;
@@ -95,7 +95,7 @@ public class Character : MainScript {
 	}
 
 	void PlayEffectIfFirstWalk() {
-		if (animationController.AnimationState != AnimationType.STAY) {
+		if (animationController.State != AnimationType.STAY) {
 			return;
 		}
 
@@ -103,11 +103,11 @@ public class Character : MainScript {
 	}
 
 	public void Jump() {
-		if (animationController.AnimationState == AnimationType.JUMP) {
+		if (animationController.State == AnimationType.JUMP) {
 			return;
 		}
 
-		EffectManager.Instance.PlayEffect(new EffectData(EffectType.JUMP, Position, Direction));
+		EffectManager.Instance.PlayEffect(new EffectData(EffectType.JUMP, Position));
 		characterMover.JumpTo(Direction);
 		characterMover.SetInAir(true);
 		AnimateByMoveState();
