@@ -11,12 +11,22 @@ public class Rock : MonoBehaviour {
 	//wait for die
 	WaitUntil dieWait;
 
+	//GameObject
+	GameObject gameObj;
+
 	void Awake() {
 		animationController = GetComponent<AnimationController>();
 		dieWait = new WaitUntil(() => animationController.Progress >= 1f);
+		gameObj = gameObject;
 	}
 
 	public void Destroy() {
+		StartCoroutine("RunDestroy");
+	}
+
+	IEnumerator RunDestroy() {
 		animationController.Animate(AnimationType.DIE);
+		yield return dieWait;
+		ObjectPool.Release(gameObj);
 	}
 }

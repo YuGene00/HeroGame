@@ -7,7 +7,6 @@ public class EffectPlayer : MonoBehaviour {
 
 	//Animator
 	Animator animator;
-	AnimatorStateInfo animatorStateInfo;
 
 	//wait for animator
 	WaitUntil enterWalkWait;
@@ -22,13 +21,12 @@ public class EffectPlayer : MonoBehaviour {
 
 	void Awake() {
 		animator = GetComponent<Animator>();
-		animatorStateInfo = animator.GetCurrentAnimatorStateInfo(0);
-		enterWalkWait = new WaitUntil(() => animatorStateInfo.IsName("Walk"));
-		exitWalkWait = new WaitWhile(() => animatorStateInfo.IsName("Walk"));
-		enterJumpWait = new WaitUntil(() => animatorStateInfo.IsName("Jump"));
-		exitJumpWait = new WaitWhile(() => animatorStateInfo.IsName("Jump"));
-		enterLandWait = new WaitUntil(() => animatorStateInfo.IsName("Land"));
-		exitLandWait = new WaitWhile(() => animatorStateInfo.IsName("Land"));
+		enterWalkWait = new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Walk"));
+		exitWalkWait = new WaitWhile(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Walk"));
+		enterJumpWait = new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"));
+		exitJumpWait = new WaitWhile(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"));
+		enterLandWait = new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Land"));
+		exitLandWait = new WaitWhile(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Land"));
 		gameObj = gameObject;
 	}
 

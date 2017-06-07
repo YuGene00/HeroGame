@@ -7,20 +7,21 @@ public class AnimationController : MonoBehaviour {
 
 	//Animator
 	Animator animator;
-	AnimatorStateInfo animatorStateInfo;
 
 	//current animation
 	public AnimationType State { get; set; }
-	public float Progress { get { return animatorStateInfo.normalizedTime; } }
+	public float Progress { get { return animator.GetCurrentAnimatorStateInfo(0).normalizedTime; } }
 
 	void Awake() {
 		animator = GetComponent<Animator>();
-		animatorStateInfo = animator.GetCurrentAnimatorStateInfo(0);
 		State = AnimationType.STAY;
 	}
 
 	public void Animate(AnimationType animationType) {
 		switch (animationType) {
+			case AnimationType.NONE:
+				ResetAnimationBool();
+				break;
 			case AnimationType.STAY:
 				SetBool("Stay", true);
 				break;

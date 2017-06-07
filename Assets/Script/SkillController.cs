@@ -22,6 +22,18 @@ public class SkillController : MonoBehaviour {
 	[SerializeField]
 	Skill ultimateSkill = null;
 
+	void Awake() {
+		InitializePassiveSkills();
+		uniqueSkill.Initialize();
+		ultimateSkill.Initialize();
+	}
+
+	void InitializePassiveSkills() {
+		for (int i = 0; i < passiveSkills.Length; ++i) {
+			passiveSkills[i].Initialize();
+		}
+	}
+
 	public void RunPassive() {
 		RunSkill(passiveSkills);
 	}
