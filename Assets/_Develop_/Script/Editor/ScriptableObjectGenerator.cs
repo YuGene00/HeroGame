@@ -22,6 +22,8 @@ public class ScriptableObjectGenerator {
 	}
 
 	static void CreateSkill() {
+		Skill skill = ScriptableObject.CreateInstance<Skill>();
+		CreateAsset(skillRoot, skill);
 		BreakRock breakRock = ScriptableObject.CreateInstance<BreakRock>();
 		CreateAsset(skillRoot, breakRock);
 	}

@@ -106,11 +106,11 @@ public class Player : Character {
 
 	public void AnimateAsImmortal(AnimationType animationType) {
 		animationController.Animate(animationType);
-		StartCoroutine("RunAnimateAsImmortal");
+		StartCoroutine("RunImmortalWhileAnimate");
 		GiveDelay(animationEndWait);
 	}
 
-	IEnumerator RunAnimateAsImmortal() {
+	IEnumerator RunImmortalWhileAnimate() {
 		isImmortal = true;
 		yield return null;
 		yield return animationEndWait;

@@ -5,7 +5,8 @@ public enum OrderInLayer {
 	OBJECT = -2,
 	PLAYER = -1,
 	ENEMY = 0,
-	EFFECT = 1
+	EFFECT = 1,
+	UIINSTAGE = 2
 }
 
 //move direction

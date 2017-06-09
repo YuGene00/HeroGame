@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Skill : ScriptableObject {
+public class Skill : ScriptableObject {
 
 	//Skill Info
 	[SerializeField]
@@ -18,7 +18,7 @@ public abstract class Skill : ScriptableObject {
 	[SerializeField]
 	protected Effector[] effectors;
 
-	public abstract void Initialize();
+	public virtual void Initialize() { }
 
 	public void Run() {
 		if (CanRun()) {
