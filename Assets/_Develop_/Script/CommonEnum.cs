@@ -22,13 +22,13 @@ public enum MoveState {
 //animation type
 public enum AnimationType {
 	NONE,
-	STAY, WALK, JUMP, DAMAGED, DIE, UNIQUE,
+	STAY, WALK, JUMP, DAMAGED, DIE, UNIQUE, ULTIMATE,
 	MAX
 }
 
 //effect type
 public enum EffectType {
 	NONE,
-	WALK, JUMP, LAND, SLASH,
+	WALK, JUMP, LAND, SLASH, SWORDDROP,
 	MAX
 }

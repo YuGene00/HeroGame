@@ -21,7 +21,7 @@ public class Rock : MainScript {
 	}
 
 	public void Destroy() {
-		StartCoroutine("RunDestroy");
+		CoroutineDelegate.Instance.StartCoroutine(RunDestroy());
 	}
 
 	IEnumerator RunDestroy() {

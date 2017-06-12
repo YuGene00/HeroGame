@@ -65,7 +65,7 @@ public class Player : Character {
 		base.Damaged(damageData);
 		if (hpController.CurrentHp > 0) {
 			KnockBack(damageData.attacker);
-			StartCoroutine("RunImmortal");
+			CoroutineDelegate.Instance.StartCoroutine(RunImmortal());
 		}
 	}
 
@@ -106,8 +106,9 @@ public class Player : Character {
 
 	public void AnimateAsImmortal(AnimationType animationType) {
 		animationController.Animate(animationType);
-		StartCoroutine("RunImmortalWhileAnimate");
+		CoroutineDelegate.Instance.StartCoroutine(RunImmortalWhileAnimate());
 		GiveDelay(animationEndWait);
+		
 	}
 
 	IEnumerator RunImmortalWhileAnimate() {

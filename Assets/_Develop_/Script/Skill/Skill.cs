@@ -18,8 +18,6 @@ public class Skill : ScriptableObject {
 	[SerializeField]
 	protected Effector[] effectors;
 
-	public virtual void Initialize() { }
-
 	public void Run() {
 		if (CanRun()) {
 			RunEffect();

@@ -20,6 +20,7 @@ public class Ai : MonoBehaviour {
 	WaitUntil playWait;
 
 	//flag for remained agro
+	Coroutine RunRemainedAgroCoroutine;
 	bool isRunningRemainedAgro = false;
 	const float remainedTime = 2f;
 	WaitForSeconds remainedWait = new WaitForSeconds(remainedTime);
@@ -28,7 +29,7 @@ public class Ai : MonoBehaviour {
 		InitializeAction();
 		Play = true;
 		playWait = new WaitUntil(() => Play);
-		StartCoroutine("RunAi");
+		CoroutineDelegate.Instance.StartCoroutine(RunAi());
 	}
 
 	void InitializeAction() {
@@ -47,10 +48,10 @@ public class Ai : MonoBehaviour {
 
 	public void SetAgro(bool isAgro) {
 		if (isAgro) {
-			StopCoroutine("RunRemainedAgro");
+			CoroutineDelegate.Instance.StopCoroutine(RunRemainedAgroCoroutine);
 			action = playerTracer;
 		} else {
-			StartCoroutine("RunRemainedAgro");
+			RunRemainedAgroCoroutine = CoroutineDelegate.Instance.StartCoroutine(RunRemainedAgro());
 		}
 	}
 

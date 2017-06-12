@@ -41,6 +41,10 @@ public class Character : MainScript {
 	//immortal
 	protected bool isImmortal = false;
 
+	//delay coroutine
+	Coroutine RunDelayCoroutine;
+	Coroutine RunDelayCustomCoroutine;
+
 	protected void Awake() {
 		trans = transform;
 		characterMover = GetComponent<CharacterMover>();
@@ -62,7 +66,7 @@ public class Character : MainScript {
 	}
 
 	void SetDirection(Direction direction) {
-		if (Direction == direction) {
+		if (Direction == direction || characterMover.IsLocked) {
 			return;
 		}
 
@@ -151,31 +155,35 @@ public class Character : MainScript {
 	#region public void GiveDelay(YieldInstruction/CustomYieldInstruction wait)
 	public void GiveDelay(YieldInstruction wait) {
 		StopDelay();
-		StartCoroutine("RunDelay", wait);
+		RunDelayCoroutine = StartCoroutine(RunDelay(wait));
 	}
 
 	public void GiveDelay(CustomYieldInstruction wait) {
 		StopDelay();
-		StartCoroutine("RunCustomDelay", wait);
+		RunDelayCustomCoroutine = StartCoroutine(RunDelay(wait));
 	}
 	#endregion
 
 	void StopDelay() {
-		StopCoroutine("RunDelay");
-		StopCoroutine("RunCustomDelay");
+		CoroutineDelegate.Instance.StopCoroutine(RunDelayCoroutine);
+		CoroutineDelegate.Instance.StopCoroutine(RunDelayCustomCoroutine);
 	}
 
+	#region IEnumerator RunDelay(YieldInstruction/CustomYieldInstruction wait)
 	IEnumerator RunDelay(YieldInstruction wait) {
 		DelayStateOn();
+		yield return null;
 		yield return wait;
 		DelayStateOff();
 	}
 
-	IEnumerator RunCustomDelay(CustomYieldInstruction wait) {
+	IEnumerator RunDelay(CustomYieldInstruction wait) {
 		DelayStateOn();
+		yield return null;
 		yield return wait;
 		DelayStateOff();
 	}
+	#endregion
 
 	void DelayStateOn() {
 		characterMover.IsLocked = true;
@@ -189,7 +197,7 @@ public class Character : MainScript {
 	}
 
 	public void RemoveDelay() {
-		StopCoroutine("RunDelay");
+		StopDelay();
 		DelayStateOff();
 	}
 }

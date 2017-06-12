@@ -8,7 +8,14 @@ public class EffectToPlayer : Effector {
 	[SerializeField]
 	EffectType effectType = EffectType.NONE;
 
+	[SerializeField]
+	bool IsDirectionRelatedToPlayer = true;
+
 	public override void RunEffect() {
-		EffectManager.Instance.PlayEffect(new EffectData(effectType, Player.Instance.Position, Player.Instance.Direction), Player.Instance.Trans);
+		Direction effectDirection = Direction.NONE;
+		if (!IsDirectionRelatedToPlayer) {
+			effectDirection = Player.Instance.Direction;
+		}
+		EffectManager.Instance.PlayEffect(new EffectData(effectType, Player.Instance.Position, effectDirection), Player.Instance.Trans);
 	}
 }

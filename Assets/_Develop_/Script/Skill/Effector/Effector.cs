@@ -6,3 +6,9 @@ public abstract class Effector : ScriptableObject {
 
 	public abstract void RunEffect();
 }
+
+public abstract class ScopingEffector : Effector {
+
+	[SerializeField]
+	protected Scope scope = null;
+}

@@ -32,7 +32,7 @@ public class EffectPlayer : MonoBehaviour {
 	}
 
 	public void PlayEffect(EffectType effectType) {
-		StartCoroutine(RunAndDestroy(effectType));
+		CoroutineDelegate.Instance.StartCoroutine(RunAndDestroy(effectType));
 	}
 
 	IEnumerator RunAndDestroy(EffectType effectType) {

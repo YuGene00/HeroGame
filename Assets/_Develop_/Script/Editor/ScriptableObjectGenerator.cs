@@ -13,45 +13,61 @@ public class ScriptableObjectGenerator {
 	const string skillRoot = "Assets/Skill/_Develop_/Skill";
 	const string conditionRoot = "Assets/Skill/_Develop_/Condition";
 	const string effectorRoot = "Assets/Skill/_Develop_/Effector";
+	const string scopeRoot = "Assets/Skill/_Develop_/Scope";
+	const string aimingRoot = "Assets/Skill/_Develop_/Scope/Aiming";
 
 	[MenuItem("ScriptableObj/Create")]
 	static void CreateScriptableObj() {
 		CreateSkill();
 		CreateCondition();
 		CreateEffector();
+		CreateScope();
+		CreateAiming();
 	}
 
 	static void CreateSkill() {
-		Skill skill = ScriptableObject.CreateInstance<Skill>();
-		CreateAsset(skillRoot, skill);
-		BreakRock breakRock = ScriptableObject.CreateInstance<BreakRock>();
-		CreateAsset(skillRoot, breakRock);
+		AssetCreator<Skill>.CreateAssetAt(skillRoot);
+		AssetCreator<AimingSkill>.CreateAssetAt(skillRoot);
 	}
 
 	static void CreateCondition() {
-		IsRockInFrontOfPlayer rockIsInFrontOfPlayer = ScriptableObject.CreateInstance<IsRockInFrontOfPlayer>();
-		CreateAsset(conditionRoot, rockIsInFrontOfPlayer);
+		AssetCreator<IsInScope>.CreateAssetAt(conditionRoot);
 	}
 
 	static void CreateEffector() {
-		AnimatePlayer animatePlayer = ScriptableObject.CreateInstance<AnimatePlayer>();
-		CreateAsset(effectorRoot, animatePlayer);
-		AnimatePlayerAsImmortal animatePlayerAsImmortal = ScriptableObject.CreateInstance<AnimatePlayerAsImmortal>();
-		CreateAsset(effectorRoot, animatePlayerAsImmortal);
-		EffectToPlayer effectToPlayer = ScriptableObject.CreateInstance<EffectToPlayer>();
-		CreateAsset(effectorRoot, effectToPlayer);
+		AssetCreator<AnimatePlayer>.CreateAssetAt(effectorRoot);
+		AssetCreator<AnimatePlayerAsImmortal>.CreateAssetAt(effectorRoot);
+		AssetCreator<DestroyClosestRock>.CreateAssetAt(effectorRoot);
+		AssetCreator<EffectToPlayer>.CreateAssetAt(effectorRoot);
+		AssetCreator<EffectAt>.CreateAssetAt(effectorRoot);
 	}
 
-	static void CreateAsset(string root, Object asset) {
-		AssetDatabase.CreateAsset(asset, CreatePath(root, asset));
+	static void CreateScope() {
+		AssetCreator<InFrontOfPlayer>.CreateAssetAt(scopeRoot);
 	}
 
-	static string CreatePath(string root, Object file) {
-		pathString.Length = 0;
-		pathString.Append(root);
-		pathString.Append("/");
-		pathString.Append(file.GetType().ToString());
-		pathString.Append(".asset");
-		return pathString.ToString();
+	static void CreateAiming() {
+		AssetCreator<RectAiming>.CreateAssetAt(aimingRoot);
+	}
+
+	class AssetCreator<T> where T : ScriptableObject {
+
+		public static void CreateAssetAt(string root) {
+			T asset = ScriptableObject.CreateInstance<T>();
+			CreateAsset(root, asset);
+		}
+
+		static void CreateAsset(string root, Object asset) {
+			AssetDatabase.CreateAsset(asset, CreatePath(root, asset));
+		}
+
+		static string CreatePath(string root, Object file) {
+			pathString.Length = 0;
+			pathString.Append(root);
+			pathString.Append("/");
+			pathString.Append(file.GetType().ToString());
+			pathString.Append(".asset");
+			return pathString.ToString();
+		}
 	}
 }

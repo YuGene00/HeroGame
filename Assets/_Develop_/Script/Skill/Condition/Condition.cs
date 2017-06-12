@@ -6,3 +6,9 @@ public abstract class Condition : ScriptableObject {
 
 	public abstract bool IsTrue();
 }
+
+public abstract class ScopingCondition : Condition {
+
+	[SerializeField]
+	protected FixedScope scope = null;
+}
