@@ -18,7 +18,28 @@ public class UIManager : MonoBehaviour {
 	GameObject rectAiming = null;
 	public GameObject RectAiming { get { return rectAiming; } }
 
+	//Life heart
+	[SerializeField]
+	GameObject[] lifeHeart = null;
+
+	//Pop up
+	[SerializeField]
+	GameObject pause = null;
+	public GameObject Pause { get { return pause; } }
+	[SerializeField]
+	GameObject victory = null;
+	public GameObject Victory { get { return victory; } }
+	[SerializeField]
+	GameObject defeat = null;
+	public GameObject Defeat { get { return defeat; } }
+
 	void Awake() {
 		instance = this;
+	}
+
+	public void SetLifeHeart(int value) {
+		for (int i = 0; i < lifeHeart.Length; ++i) {
+			lifeHeart[i].SetActive(i < value);
+		}
 	}
 }

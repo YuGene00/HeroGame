@@ -15,4 +15,8 @@ public class Enemy : Character {
 		base.Awake();
 		ai = GetComponent<Ai>();
 	}
+
+	protected override void DeadAction() {
+		ai.Play = false;
+	}
 }

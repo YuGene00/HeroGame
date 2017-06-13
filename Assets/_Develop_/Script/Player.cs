@@ -36,6 +36,7 @@ public class Player : Character {
 
 	//Wait for animation end
 	WaitUntil animationEndWait;
+	delegate void MethodAfterAnimation();
 
 	new void Awake() {
 		instance = this;
@@ -56,12 +57,22 @@ public class Player : Character {
 		skillController.RunUnique();
 	}
 
+	public void RunUltimate() {
+		skillController.RunUltimate();
+	}
+
+	IEnumerator RunCallAfterFinishAnimation(MethodAfterAnimation method) {
+		yield return null;
+		yield return animationEndWait;
+		method();
+	}
+
 	public override void Damaged(DamageData damageData) {
 		if (isImmortal) {
 			return;
 		}
 
-		//EventManager.Instance.Result.IncreaseHitCount();
+		EventManager.Instance.IncreaseHitCount();
 		base.Damaged(damageData);
 		if (hpController.CurrentHp > 0) {
 			KnockBack(damageData.attacker);
@@ -100,21 +111,18 @@ public class Player : Character {
 	}
 
 	protected override void DeadAction() {
-		isImmortal = true;
-		EventManager.Instance.PlayerDie.Run();
+		DelayStateOn();
+		CallAfterFinishAnimation(EventManager.Instance.PlayerDie);
+	}
+
+	void CallAfterFinishAnimation(MethodAfterAnimation method) {
+		CoroutineDelegate.Instance.StartCoroutine(RunCallAfterFinishAnimation(method));
 	}
 
 	public void AnimateAsImmortal(AnimationType animationType) {
 		animationController.Animate(animationType);
-		CoroutineDelegate.Instance.StartCoroutine(RunImmortalWhileAnimate());
 		GiveDelay(animationEndWait);
-		
-	}
-
-	IEnumerator RunImmortalWhileAnimate() {
 		isImmortal = true;
-		yield return null;
-		yield return animationEndWait;
-		isImmortal = false;
+		CallAfterFinishAnimation(() => isImmortal = false);
 	}
 }

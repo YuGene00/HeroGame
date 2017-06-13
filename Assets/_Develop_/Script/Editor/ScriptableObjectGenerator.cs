@@ -40,6 +40,8 @@ public class ScriptableObjectGenerator {
 		AssetCreator<DestroyClosestRock>.CreateAssetAt(effectorRoot);
 		AssetCreator<EffectToPlayer>.CreateAssetAt(effectorRoot);
 		AssetCreator<EffectAt>.CreateAssetAt(effectorRoot);
+		AssetCreator<DamageAt>.CreateAssetAt(effectorRoot);
+		AssetCreator<EndGame>.CreateAssetAt(effectorRoot);
 	}
 
 	static void CreateScope() {

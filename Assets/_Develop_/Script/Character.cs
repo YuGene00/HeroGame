@@ -40,6 +40,7 @@ public class Character : MainScript {
 
 	//immortal
 	protected bool isImmortal = false;
+	public bool IsImmortal { set { isImmortal = value; } }
 
 	//delay coroutine
 	Coroutine RunDelayCoroutine;
@@ -185,12 +186,12 @@ public class Character : MainScript {
 	}
 	#endregion
 
-	void DelayStateOn() {
+	public void DelayStateOn() {
 		characterMover.IsLocked = true;
 		animationController.IsLocked = true;
 	}
 
-	void DelayStateOff() {
+	public void DelayStateOff() {
 		characterMover.IsLocked = false;
 		animationController.IsLocked = false;
 		AnimateByMoveState();

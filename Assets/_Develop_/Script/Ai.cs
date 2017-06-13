@@ -42,7 +42,9 @@ public class Ai : MonoBehaviour {
 	IEnumerator RunAi() {
 		while (true) {
 			yield return playWait;
-			action.Action();
+			if (Play) {
+				action.Action();
+			}
 		}
 	}
 

@@ -29,22 +29,22 @@ public class CoroutineDelegate : MonoBehaviour {
 		base.StopCoroutine(routine);
 	}
 
-	class MicroCoroutine {
+	//class MicroCoroutine {
 
-		//list of coroutine
-		List<IEnumerator> coroutines = new List<IEnumerator>();
+	//	//list of coroutine
+	//	List<IEnumerator> coroutines = new List<IEnumerator>();
 
-		public void AddCoroutine(IEnumerator enumerator) {
-			coroutines.Add(enumerator);
-		}
+	//	public void AddCoroutine(IEnumerator enumerator) {
+	//		coroutines.Add(enumerator);
+	//	}
 
-		public void Run() {
-			for (int i = 0; i < coroutines.Count; ++i) {
-				if (!coroutines[i].MoveNext()) {
-					coroutines.RemoveAt(i);
-					continue;
-				}
-			}
-		}
-	}
+	//	public void Run() {
+	//		for (int i = 0; i < coroutines.Count; ++i) {
+	//			if (!coroutines[i].MoveNext()) {
+	//				coroutines.RemoveAt(i);
+	//				continue;
+	//			}
+	//		}
+	//	}
+	//}
 }

@@ -26,9 +26,15 @@ public class HpController : MonoBehaviour, IStat {
 
 	public void Damaged(int value) {
 		currentHp -= value;
+		UIManager.Instance.SetLifeHeart(currentHp);
 	}
 
 	public void Recovery(int value) {
 		currentHp = Mathf.Min(currentHp + value, maxHp.Value);
+		try {
+			UIManager.Instance.SetLifeHeart(currentHp);
+		} catch {
+			return;
+		}
 	}
 }
