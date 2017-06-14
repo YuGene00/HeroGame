@@ -25,7 +25,7 @@ public class Ai : MonoBehaviour {
 	const float remainedTime = 2f;
 	WaitForSeconds remainedWait = new WaitForSeconds(remainedTime);
 
-	void Awake() {
+	void Start() {
 		InitializeAction();
 		Play = true;
 		playWait = new WaitUntil(() => Play);
@@ -42,9 +42,11 @@ public class Ai : MonoBehaviour {
 	IEnumerator RunAi() {
 		while (true) {
 			yield return playWait;
-			if (Play) {
-				action.Action();
+			if (!Play) {
+				continue;
 			}
+
+			action.Action();
 		}
 	}
 

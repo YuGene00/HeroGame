@@ -54,7 +54,7 @@ public abstract class AimingScope : Scope {
 	IEnumerator CallBaseAfterAiming(CallBaseEffect callBaseEffect) {
 		yield return CoroutineDelegate.Instance.StartCoroutine(RunAiming());
 		callBaseEffect();
-		UIManager.Instance.DefaultUi.SetActive(true);
+		//UIManager.Instance.DefaultUi.SetActive(true);
 		AimingUi.SetActive(false);
 	}
 

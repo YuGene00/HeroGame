@@ -28,8 +28,9 @@ public class RectAiming : AimingScope {
 	}
 
 	protected override IEnumerator RunAiming() {
-		while (!Input.GetMouseButtonUp(0)) {
-			AimingTrans.position = (Vector2)MainCamera.ScreenToWorldPoint(Input.mousePosition);
+		TouchSupporter.ITouch aimingTouch = TouchSupporter.GetTouchInPhase(TouchPhase.Began);
+		while (!aimingTouch.IsInPhase(TouchPhase.Ended)) {
+			AimingTrans.position = (Vector2)MainCamera.ScreenToWorldPoint(aimingTouch.Position);
 			yield return null;
 		}
 	}

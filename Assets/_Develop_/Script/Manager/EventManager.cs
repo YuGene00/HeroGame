@@ -76,14 +76,23 @@ public class EventManager : MonoBehaviour {
 	}
 
 	public void MoveToNext() {
-		SceneManager.LoadScene(nextStage);
+		Time.timeScale = 1f;
+		LoadScene(nextStage);
 	}
 
 	public void MoveToStage(string stage) {
-		SceneManager.LoadScene(stage);
+		Time.timeScale = 1f;
+		LoadScene(stage);
 	}
 
 	public void Restart() {
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		Time.timeScale = 1f;
+		LoadScene(SceneManager.GetActiveScene().name);
+	}
+
+	void LoadScene(string scene) {
+		CoroutineDelegate.Instance.StopAllCoroutines();
+		Time.timeScale = 1f;
+		SceneManager.LoadScene(scene);
 	}
 }
