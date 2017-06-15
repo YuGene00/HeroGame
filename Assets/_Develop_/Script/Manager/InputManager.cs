@@ -176,6 +176,10 @@ public class InputManager : MonoBehaviour {
 	}
 
 	void InitializeMiddleEdge() {
+		if (middleAreaOfController == null) {
+			return;
+		}
+
 		float edgeOffset = middleAreaOfController.sizeDelta.x * 0.5f;
 		float middleAreaX = middleAreaOfController.position.x;
 		middleLeftEdge = middleAreaX - edgeOffset;
@@ -183,11 +187,19 @@ public class InputManager : MonoBehaviour {
 	}
 
 	public void UseController() {
+		if (isUsingController) {
+			return;
+		}
+
 		controllerTouch = TouchSupporter.GetTouchInPhase(TouchPhase.Began);
 		isUsingController = true;
 	}
 
 	public void HoldSkill() {
+		if (isHoldingSkill) {
+			return;
+		}
+
 		holdingSkillTouch = TouchSupporter.GetTouchInPhase(TouchPhase.Began);
 		isHoldingSkill = true;
 	}
