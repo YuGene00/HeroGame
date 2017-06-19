@@ -56,7 +56,7 @@ public class TouchSupporter {
 					case (int)TouchType.MOUSE:
 						return Input.mousePosition;
 					default:
-						return Input.GetTouch(touchId).position;
+						return GetTouchById(touchId).position;
 				}
 			}
 		}
@@ -72,8 +72,18 @@ public class TouchSupporter {
 				case (int)TouchType.MOUSE:
 					return IsMouseInPhase(touchPhase);
 				default:
-					return Input.GetTouch(touchId).phase == touchPhase;
+					return GetTouchById(touchId).phase == touchPhase;
 			}
+		}
+
+		UnityEngine.Touch GetTouchById(int touchId) {
+			for (int i = 0; i < Input.touchCount; ++i) {
+				UnityEngine.Touch touch = Input.GetTouch(i);
+				if (touch.fingerId == touchId) {
+					return touch;
+				}
+			}
+			return default(UnityEngine.Touch);
 		}
 	}
 }
